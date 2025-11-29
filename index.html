@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binance Alpha Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <style>
+        /* 隐藏滚动条 */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* 全局字体：严格还原截图风格，使用系统默认无衬线字体 */
+        /* 在 iPhone/iPad 上会自动使用 San Francisco，在安卓上使用 Roboto */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+        }
+        
+        /* ID 字体专用样式 */
+        .font-handle {
+            font-family: inherit; /* 继承系统字体 */
+            font-weight: 700;     /* 标准粗体，还原截图厚度 */
+            letter-spacing: 0.01em; /* 微调间距 */
+        }
+        
+        /* 允许选择文本，方便复制 */
+        .allow-select {
+            user-select: text;
+            -webkit-user-select: text;
+            cursor: text;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // ==========================================
+        // 1. 图标组件 (SVG)
+        // ==========================================
+        const IconWrapper = ({ children, className, size = 24, ...props }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+                {children}
+            </svg>
+        );
+
+        const Clock = (props) => <IconWrapper {...props}><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></IconWrapper>;
+        const DollarSign = (props) => <IconWrapper {...props}><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></IconWrapper>;
+        const PieChart = (props) => <IconWrapper {...props}><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></IconWrapper>;
+        const Check = (props) => <IconWrapper {...props}><polyline points="20 6 9 17 4 12"></polyline></IconWrapper>;
+        const Copy = (props) => <IconWrapper {...props}><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></IconWrapper>;
+        const Info = (props) => <IconWrapper {...props}><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></IconWrapper>;
+        const Zap = (props) => <IconWrapper {...props}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></IconWrapper>;
+        const Sun = (props) => <IconWrapper {...props}><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></IconWrapper>;
+        const ArrowRightLeft = (props) => <IconWrapper {...props}><path d="m16 7 5 5-5 5"></path><path d="M21 12H3"></path><path d="m8 17-5-5 5-5"></path></IconWrapper>;
+        const TrendingUp = (props) => <IconWrapper {...props}><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></IconWrapper>;
+        const TrendingDown = (props) => <IconWrapper {...props}><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></IconWrapper>;
+        const BarChart3 = (props) => <IconWrapper {...props}><path d="M3 3v18h18"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path></IconWrapper>;
+        const Wallet = (props) => <IconWrapper {...props}><path d="M20 7h-7"></path><path d="M14 21h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6"></path><path d="M21 9v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></IconWrapper>;
+        const Sparkles = (props) => <IconWrapper {...props}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></IconWrapper>;
+        const Globe = (props) => <IconWrapper {...props}><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></IconWrapper>;
+
+        // ==========================================
+        // 2. Logo 组件
+        // ==========================================
+        const BinanceLogo = () => (
+            <div className="w-5 h-5 rounded-full flex items-center justify-center bg-[#FCD535] overflow-hidden">
+                <svg viewBox="0 0 32 32" className="w-3 h-3">
+                    <path fill="#1E2329" d="M16 0L9.65 6.35L16 12.7l6.35-6.35L16 0zm-8.8 7.2L0 14.4V16l7.2 7.2l6.35-6.35L7.2 10.5L16 19.3l8.8-8.8l6.35 6.35l-6.35 6.35L16 32l-8.8-8.8L0.85 29.55L16 44.7l15.15-15.15L24.8 23.2l6.35-6.35l-6.35-6.35L16 1.7L7.2 10.5z"/>
+                </svg>
+            </div>
+        );
+
+        const ProjectLogo = () => {
+            return (
+                <div className="w-12 h-12 rounded-2xl bg-black flex items-center justify-center shrink-0 overflow-hidden shadow-lg border border-white/10">
+                    <img 
+                        src="https://pbs.twimg.com/profile_images/1829074091665760256/2IbodDYP_400x400.jpg" 
+                        alt="GaiAI Logo"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.parentNode.innerHTML = `<svg viewBox="0 0 100 100" class="w-9 h-9"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#d946ef"/></linearGradient></defs><circle cx="50" cy="50" r="12" fill="none" stroke="url(#g)" stroke-width="8"/><path d="M20 50 A 30 30 0 0 1 80 50 M15 50 L25 50 M75 50 L85 50" fill="none" stroke="url(#g)" stroke-width="8" stroke-linecap="round"/></svg>`;
+                        }}
+                    />
+                </div>
+            );
+        };
+
+        // ==========================================
+        // 3. 多语言配置
+        // ==========================================
+        const LANGUAGES = {
+            zh: { name: '中文', flag: '🇨🇳' },
+            en: { name: 'English', flag: '🇺🇸' },
+            ja: { name: '日本語', flag: '🇯🇵' },
+            ko: { name: '한국어', flag: '🇰🇷' }
+        };
+
+        const TRANSLATIONS = {
+            zh: {
+                source: 'Source (推特)',
+                tag: 'Binance Alpha',
+                open: '开盘(UTC+8)',
+                raised: '融资额',
+                circ: '初始流通',
+                pool: '池子价',
+                mcap: '流通市值',
+                fdv: 'FDV',
+                airdrop: '空投门槛 (Alpha)',
+                bullish: '利好',
+                bearish: '风险',
+                intro: '简介',
+                total: '总量',
+                chain: 'BNB Chain',
+                copy: '复制',
+                copied: '已复制'
+            },
+            en: {
+                source: 'Source (Twitter)',
+                tag: 'Binance Alpha',
+                open: 'Open(UTC+8)',
+                raised: 'Raised',
+                circ: 'Init. Circ',
+                pool: 'Pool Price',
+                mcap: 'M.Cap',
+                fdv: 'FDV',
+                airdrop: 'Airdrop (Alpha)',
+                bullish: 'Bullish',
+                bearish: 'Bearish',
+                intro: 'Intro',
+                total: 'TOTAL',
+                chain: 'BNB Chain',
+                copy: 'Copy',
+                copied: 'Copied'
+            },
+            ja: {
+                source: 'ソース (Twitter)',
+                tag: 'バイナンス Alpha',
+                open: '開始(UTC+8)',
+                raised: '調達額',
+                circ: '初期流通',
+                pool: 'プール価格',
+                mcap: '時価総額',
+                fdv: 'FDV',
+                airdrop: 'エアドロ条件',
+                bullish: '強気材料',
+                bearish: '懸念点',
+                intro: '概要',
+                total: '合計',
+                chain: 'BNB Chain',
+                copy: 'コピー',
+                copied: '完了'
+            },
+            ko: {
+                source: '출처 (Twitter)',
+                tag: '바이낸스 Alpha',
+                open: '개장(UTC+8)',
+                raised: '모금액',
+                circ: '초기유통',
+                pool: '풀 가격',
+                mcap: '유통시총',
+                fdv: 'FDV',
+                airdrop: '에어드랍',
+                bullish: '호재',
+                bearish: '리스크',
+                intro: '소개',
+                total: '총계',
+                chain: 'BNB Chain',
+                copy: '복사',
+                copied: '완료'
+            }
+        };
+
+        const DATA_CONTENT = {
+            id: 'gaiai',
+            name: 'GaiAI',
+            symbol: 'GAIX',
+            metrics: {
+                startTime: '16:00',
+                fundraising: '500万u',
+                initialCirculation: '16.42%',
+                poolPrice: '0.08U',
+                mcap: '$13M',
+                fdv: '$80M'
+            },
+            contractAddress: '0xc12efb9e4a1a753e7f6523482c569793c2271dbb',
+            exchanges: ['Binance Alpha', 'MEXC'],
+            tokenomics: [
+                { label: '45%', color: '#3B82F6' },
+                { label: '16%', color: '#8B5CF6' },
+                { label: '15%', color: '#10B981' },
+                { label: '10%', color: '#F59E0B' },
+                { label: '8%', color: '#EF4444' },
+                { label: '6%', color: '#6B7280' },
+            ],
+            langData: {
+                zh: {
+                    date: '11月29日',
+                    airdropReq: '256 Alpha 积分',
+                    airdropMethod: '先到先得',
+                    airdropNote: '每人400币 · 共25000名额',
+                    intro: '被称为“链上 Midjourney”，文字生成艺术并铸造 NFT，解决 AI 资产确权痛点。',
+                    bullish: ['首个创意 AI DAO', '分红机制可持续', 'Binance Alpha 流量'],
+                    bearish: ['初始流通 16% 偏高', '竞品 Midjourney 强', 'FDV 8000万相对较高'],
+                    tokenomicsLabels: ['社区', '团队', '流动性', '投资', '空投', '运营']
+                },
+                en: {
+                    date: 'Nov 29',
+                    airdropReq: '256 Alpha Points',
+                    airdropMethod: 'FCFS',
+                    airdropNote: '400 Tokens/Person · 25k Slots',
+                    intro: 'Dubbed "On-chain Midjourney", gen-AI art to NFT, solving AI asset rights.',
+                    bullish: ['First Creative AI DAO', 'Sustainable Dividends', 'Binance Alpha Traffic'],
+                    bearish: ['High Initial Circ 16%', 'Strong Rival Midjourney', 'Relatively High FDV'],
+                    tokenomicsLabels: ['Comm.', 'Team', 'Liquidity', 'Invest', 'Airdrop', 'Ops']
+                },
+                ja: {
+                    date: '11月29日',
+                    airdropReq: '256 Alpha ポイント',
+                    airdropMethod: '先着順',
+                    airdropNote: '1人400枚 · 25,000枠',
+                    intro: '「オンチェーン版Midjourney」と呼ばれ、AIアート生成とNFT化、権利問題を解決。',
+                    bullish: ['初のクリエイティブAI DAO', '持続可能な配当', 'バイナンスAlphaの注目度'],
+                    bearish: ['初期流通16%は高め', '競合Midjourneyが強力', 'FDVは割高感あり'],
+                    tokenomicsLabels: ['地域', 'チーム', '流動性', '投資', '配布', '運営']
+                },
+                ko: {
+                    date: '11월 29일',
+                    airdropReq: '256 Alpha 포인트',
+                    airdropMethod: '선착순',
+                    airdropNote: '인당 400개 · 25,000명',
+                    intro: 'AI 아트 생성 및 NFT 발행을 통한 자산 권리 문제 해결, "온체인 Midjourney"로 불림.',
+                    bullish: ['최초의 크리에이티브 AI DAO', '지속 가능한 배당', '바이낸스 Alpha 트래픽'],
+                    bearish: ['초기 유통 16% 다소 높음', 'Midjourney 경쟁 심화', '상대적으로 높은 FDV'],
+                    tokenomicsLabels: ['커뮤니티', '팀', '유동성', '투자', '에어드랍', '운영']
+                }
+            }
+        };
+
+        // ==========================================
+        // 5. 核心指标组件 (圆角)
+        // ==========================================
+        const CompactMetric = ({ theme, Icon, label, value, color }) => (
+            <div className={`p-3 rounded-2xl text-center flex flex-col items-center justify-center ${theme.buttonBg} transition-transform active:scale-95`}>
+                <div className={`flex items-center gap-1 mb-1 opacity-60 ${theme.textSecondary}`}>
+                     <Icon size={12} />
+                     <span className="text-[10px] uppercase font-bold tracking-wider">{label}</span>
+                </div>
+                <div className={`text-sm font-bold font-mono ${color}`}>{value}</div>
+            </div>
+        );
+
+        const App = () => {
+            const [currentId, setCurrentId] = useState('gaiai');
+            const [lang, setLang] = useState('zh');
+            const [showLangMenu, setShowLangMenu] = useState(false);
+            const [copied, setCopied] = useState(false);
+            const [isDarkMode, setIsDarkMode] = useState(true);
+            const [animate, setAnimate] = useState(false);
+
+            const baseData = DATA_CONTENT;
+            // 安全读取语言数据，默认回退到英语
+            const langData = baseData.langData[lang] || baseData.langData['en'];
+            const t = TRANSLATIONS[lang];
+
+            useEffect(() => {
+                setAnimate(true);
+                const timer = setTimeout(() => setAnimate(false), 500);
+                return () => clearTimeout(timer);
+            }, [lang]);
+
+            const handleCopy = () => {
+                const textToCopy = baseData.contractAddress;
+                const textArea = document.createElement("textarea");
+                textArea.value = textToCopy;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-9999px";
+                textArea.style.top = "0";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    const successful = document.execCommand('copy');
+                    if (successful) { setCopied(true); setTimeout(() => setCopied(false), 2000); }
+                } catch (err) { console.error('Copy failed', err); }
+                document.body.removeChild(textArea);
+            };
+
+            const toggleTheme = () => setIsDarkMode(prev => !prev);
+
+            const theme = {
+                bg: isDarkMode ? 'bg-black' : 'bg-gray-100',
+                text: isDarkMode ? 'text-white' : 'text-gray-900',
+                textSecondary: isDarkMode ? 'text-gray-400' : 'text-gray-600',
+                cardBg: isDarkMode ? 'bg-[#151516] border-white/5' : 'bg-white border-gray-200',
+                borderColor: isDarkMode ? 'border-gray-800' : 'border-gray-300',
+                buttonBg: isDarkMode ? 'bg-[#1c1c1e]' : 'bg-gray-100',
+                hoverBg: isDarkMode ? 'hover:bg-[#2c2c2e]' : 'hover:bg-gray-200',
+                contractBg: isDarkMode ? 'bg-black/20 hover:bg-black/40' : 'bg-gray-200 hover:bg-gray-300',
+                contractText: isDarkMode ? 'text-gray-300 group-hover:text-white' : 'text-gray-700 group-hover:text-black',
+                chartColors: ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#6B7280']
+            };
+
+            let cumulativePercent = 0;
+            const chartData = (baseData.tokenomics || []).map((item, index) => {
+                const label = langData.tokenomicsLabels?.[index] || item.label;
+                const value = parseFloat(item.label);
+                const startOffset = cumulativePercent;
+                cumulativePercent += value;
+                return { ...item, labelText: label, value, offset: startOffset };
+            });
+
+            return (
+                <div className={`min-h-screen w-full flex flex-col items-center justify-center p-0 md:p-6 ${theme.bg} ${theme.text}`} onClick={() => setShowLangMenu(false)}>
+                    
+                    {/* App Container */}
+                    <div className={`w-full max-w-[420px] md:h-auto min-h-[600px] flex flex-col rounded-[2.5rem] overflow-hidden shadow-2xl ${theme.cardBg} border ${theme.borderColor}`}>
+                        
+                        {/* Header */}
+                        <header className={`px-6 py-5 flex justify-between items-center bg-opacity-50 backdrop-blur-md sticky top-0 z-10 ${theme.cardBg}`}>
+                            <div className="flex items-center gap-2">
+                                <BinanceLogo />
+                                <span className="text-sm font-black tracking-widest uppercase text-[#FCD535]">Binance Alpha</span>
+                            </div>
+                            <div className="flex gap-2 relative">
+                                <div className="relative" onClick={(e) => e.stopPropagation()}>
+                                    <button onClick={() => setShowLangMenu(!showLangMenu)} className={`p-2 rounded-full ${theme.buttonBg} ${theme.hoverBg} transition-colors`}>
+                                        <Globe size={16}/>
+                                        <span className="text-xs ml-1 font-bold">{LANGUAGES[lang].flag}</span>
+                                    </button>
+                                    {showLangMenu && (
+                                        <div className={`absolute right-0 top-full mt-2 w-32 rounded-2xl overflow-hidden shadow-xl border ${theme.borderColor} ${theme.cardBg} z-50`}>
+                                            {Object.keys(LANGUAGES).map((key) => (
+                                                <button 
+                                                    key={key}
+                                                    onClick={() => { setLang(key); setShowLangMenu(false); }}
+                                                    className={`w-full text-left px-4 py-3 text-xs font-bold flex items-center gap-2 ${theme.hoverBg}`}
+                                                >
+                                                    <span>{LANGUAGES[key].flag}</span>
+                                                    <span>{LANGUAGES[key].name}</span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                                <button onClick={toggleTheme} className={`p-2 rounded-full ${theme.buttonBg} ${theme.hoverBg} transition-colors`}><Sun size={16}/></button>
+                            </div>
+                        </header>
+
+                        {/* Content Area */}
+                        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-5">
+                            
+                            {/* Top Info */}
+                            <div className="flex flex-col justify-between items-start gap-4">
+                                <div className="w-full flex justify-between items-start">
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-4 mb-2">
+                                            <ProjectLogo id={baseData.id} />
+                                            <h1 className="text-3xl font-black uppercase tracking-tight flex flex-wrap items-center gap-2">
+                                                {baseData.name}
+                                                <span className="text-xl text-gray-500 font-bold">({baseData.symbol})</span>
+                                            </h1>
+                                        </div>
+                                        <div className="flex flex-col pl-1">
+                                            <span className={`text-[10px] uppercase font-bold tracking-wider ${theme.textSecondary} mb-0.5`}>{t.source}</span>
+                                            <a 
+                                                href="https://x.com/0xko1" 
+                                                target="_blank" 
+                                                rel="noopener noreferrer"
+                                                className={`text-2xl tracking-tight font-handle allow-select hover:opacity-80 transition-opacity ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
+                                                title="点击访问推特主页"
+                                            >
+                                                @0xko1
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col items-end gap-1">
+                                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold bg-yellow-500/10 text-[#FCD535] border border-yellow-500/20`}>{t.tag}</span>
+                                        <span className={`text-xs font-bold ${theme.textSecondary}`}>{langData.date}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Metrics - 3cols */}
+                            <div className="grid grid-cols-3 gap-2">
+                                <CompactMetric theme={theme} Icon={Clock} label={t.open} value={baseData.metrics.startTime} color="text-blue-500" />
+                                <CompactMetric theme={theme} Icon={DollarSign} label={t.raised} value={baseData.metrics.fundraising} color="text-green-500" />
+                                <CompactMetric theme={theme} Icon={PieChart} label={t.circ} value={baseData.metrics.initialCirculation} color="text-purple-500" />
+                                <CompactMetric theme={theme} Icon={BarChart3} label={t.pool} value={baseData.metrics.poolPrice} color="text-orange-500" />
+                                <CompactMetric theme={theme} Icon={Wallet} label={t.mcap} value={baseData.metrics.mcap} color="text-pink-500" />
+                                <CompactMetric theme={theme} Icon={Sparkles} label={t.fdv} value={baseData.metrics.fdv} color="text-indigo-500" />
+                            </div>
+
+                            {/* Airdrop Info */}
+                            <div className={`p-4 rounded-3xl border ${theme.borderColor} bg-gradient-to-r from-yellow-900/10 to-transparent flex flex-col gap-3`}>
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2.5 rounded-full bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
+                                        <Zap size={18} />
+                                    </div>
+                                    <div>
+                                        <div className="text-[10px] font-bold uppercase text-yellow-500 mb-0.5">{t.airdrop}</div>
+                                        <div className="text-base font-bold">{langData.airdropReq}</div>
+                                    </div>
+                                </div>
+                                <div className={`text-xs border-t ${theme.borderColor} pt-2 pl-1`}>
+                                    <div className={`${theme.textSecondary} mb-0.5`}>{langData.airdropMethod}</div>
+                                    <div className="font-bold">{langData.airdropNote}</div>
+                                </div>
+                            </div>
+
+                            {/* Analysis - 2cols */}
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className={`p-4 rounded-3xl ${theme.buttonBg} border ${theme.borderColor}`}>
+                                    <div className="flex items-center gap-1.5 mb-2">
+                                        <div className="p-1 rounded-full bg-green-500/20 text-green-500"><TrendingUp size={14} /></div>
+                                        <h3 className="text-xs font-black text-green-500">{t.bullish}</h3>
+                                    </div>
+                                    <ul className="space-y-1.5">
+                                        {langData.bullish.map((item, i) => (
+                                            <li key={i} className={`text-[10px] leading-tight font-medium flex items-start gap-1.5 ${theme.textSecondary}`}>
+                                                <span className="text-green-500 mt-1 w-1 h-1 rounded-full bg-green-500 shrink-0"></span> {item}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <div className={`p-4 rounded-3xl ${theme.buttonBg} border ${theme.borderColor}`}>
+                                    <div className="flex items-center gap-1.5 mb-2">
+                                        <div className="p-1 rounded-full bg-red-500/20 text-red-500"><TrendingDown size={14} /></div>
+                                        <h3 className="text-xs font-black text-red-500">{t.bearish}</h3>
+                                    </div>
+                                    <ul className="space-y-1.5">
+                                        {langData.bearish.map((item, i) => (
+                                            <li key={i} className={`text-[10px] leading-tight font-medium flex items-start gap-1.5 ${theme.textSecondary}`}>
+                                                <span className="text-red-500 mt-1 w-1 h-1 rounded-full bg-red-500 shrink-0"></span> {item}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+
+                            {/* Intro & Tokenomics */}
+                            <div className={`p-5 rounded-3xl border ${theme.borderColor} ${theme.cardBg}`}>
+                                <div className="flex items-center gap-2 mb-3 opacity-70">
+                                    <Info size={14} />
+                                    <span className="text-[10px] font-black uppercase">{t.intro}</span>
+                                </div>
+                                <p className={`text-xs leading-relaxed mb-5 font-medium ${theme.textSecondary}`}>{langData.intro}</p>
+                                
+                                <div className="flex items-center gap-4">
+                                    <div className="relative w-16 h-16 shrink-0">
+                                        <svg viewBox="0 0 40 40" className="w-full h-full -rotate-90">
+                                            {chartData.map((slice, i) => (
+                                                <circle key={i} cx="20" cy="20" r="15.915" fill="transparent" stroke={slice.color} strokeWidth="6" strokeDasharray={`${slice.value} ${100 - slice.value}`} strokeDashoffset={-slice.offset} />
+                                            ))}
+                                        </svg>
+                                        <div className="absolute inset-0 flex items-center justify-center text-[6px] font-black">{t.total}</div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 w-full">
+                                        {chartData.map((item, i) => (
+                                            <div key={i} className={`flex items-center justify-between`}>
+                                                <div className="flex items-center gap-1.5">
+                                                    <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: item.color }}></div>
+                                                    <span className={`text-[9px] font-bold ${theme.textSecondary}`}>{item.labelText}</span>
+                                                </div>
+                                                <span className="text-[9px] font-mono font-bold">{item.label}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Contract & Footer */}
+                            <div className={`p-5 rounded-3xl border ${theme.borderColor} ${theme.cardBg} flex flex-col gap-4`}>
+                                <div>
+                                    <div className="text-[10px] font-black uppercase mb-2 opacity-50">EXCHANGES</div>
+                                    <div className="flex flex-wrap gap-2 mb-4">
+                                        {baseData.exchanges.map((ex, i) => (
+                                            <span key={i} className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border ${theme.borderColor} ${i===0 ? 'text-blue-400 bg-blue-900/10' : 'text-gray-400'}`}>{ex}</span>
+                                        ))}
+                                    </div>
+                                    <div className="text-[10px] font-black uppercase mb-1 opacity-50">{t.chain}</div>
+                                </div>
+                                
+                                <div onClick={handleCopy} className={`p-3 rounded-xl border ${theme.borderColor} ${theme.contractBg} cursor-pointer transition-colors group`}>
+                                    <div className="flex justify-between items-center mb-1">
+                                        <span className="text-[9px] font-bold text-gray-500">CONTRACT</span>
+                                        {copied ? <Check size={10} className="text-green-500"/> : <Copy size={10} className="text-gray-500 group-hover:text-current"/>}
+                                    </div>
+                                    <code className={`text-[10px] font-mono break-all ${theme.contractText} transition-colors`}>{baseData.contractAddress}</code>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
