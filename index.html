@@ -10,24 +10,18 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
     <style>
-        /* 隐藏滚动条 */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
         
-        /* 全局字体：严格还原截图风格，使用系统默认无衬线字体 */
-        /* 在 iPhone/iPad 上会自动使用 San Francisco，在安卓上使用 Roboto */
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
-        }
-        
-        /* ID 字体专用样式 */
+        /* 优化后的字体：清晰、粗壮、易读 */
         .font-handle {
-            font-family: inherit; /* 继承系统字体 */
-            font-weight: 700;     /* 标准粗体，还原截图厚度 */
-            letter-spacing: 0.01em; /* 微调间距 */
+            font-family: "Verdana", "Arial", sans-serif;
+            font-weight: 900; /* 特粗 */
+            letter-spacing: 0.5px;
         }
         
-        /* 允许选择文本，方便复制 */
+        /* 强制允许选择文本，方便复制 */
         .allow-select {
             user-select: text;
             -webkit-user-select: text;
@@ -42,7 +36,7 @@
         const { useState, useEffect, useMemo } = React;
 
         // ==========================================
-        // 1. 图标组件 (SVG)
+        // 1. 图标组件
         // ==========================================
         const IconWrapper = ({ children, className, size = 24, ...props }) => (
             <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
@@ -53,8 +47,8 @@
         const Clock = (props) => <IconWrapper {...props}><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></IconWrapper>;
         const DollarSign = (props) => <IconWrapper {...props}><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></IconWrapper>;
         const PieChart = (props) => <IconWrapper {...props}><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></IconWrapper>;
-        const Check = (props) => <IconWrapper {...props}><polyline points="20 6 9 17 4 12"></polyline></IconWrapper>;
         const Copy = (props) => <IconWrapper {...props}><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></IconWrapper>;
+        const Check = (props) => <IconWrapper {...props}><polyline points="20 6 9 17 4 12"></polyline></IconWrapper>;
         const Info = (props) => <IconWrapper {...props}><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></IconWrapper>;
         const Zap = (props) => <IconWrapper {...props}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></IconWrapper>;
         const Sun = (props) => <IconWrapper {...props}><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></IconWrapper>;
@@ -69,28 +63,37 @@
         // ==========================================
         // 2. Logo 组件
         // ==========================================
-        const BinanceLogo = () => (
-            <div className="w-5 h-5 rounded-full flex items-center justify-center bg-[#FCD535] overflow-hidden">
-                <svg viewBox="0 0 32 32" className="w-3 h-3">
-                    <path fill="#1E2329" d="M16 0L9.65 6.35L16 12.7l6.35-6.35L16 0zm-8.8 7.2L0 14.4V16l7.2 7.2l6.35-6.35L7.2 10.5L16 19.3l8.8-8.8l6.35 6.35l-6.35 6.35L16 32l-8.8-8.8L0.85 29.55L16 44.7l15.15-15.15L24.8 23.2l6.35-6.35l-6.35-6.35L16 1.7L7.2 10.5z"/>
-                </svg>
-            </div>
-        );
-
-        const ProjectLogo = () => {
-            return (
-                <div className="w-12 h-12 rounded-2xl bg-black flex items-center justify-center shrink-0 overflow-hidden shadow-lg border border-white/10">
-                    <img 
-                        src="https://pbs.twimg.com/profile_images/1829074091665760256/2IbodDYP_400x400.jpg" 
-                        alt="GaiAI Logo"
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                            e.target.style.display = 'none';
-                            e.target.parentNode.innerHTML = `<svg viewBox="0 0 100 100" class="w-9 h-9"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#d946ef"/></linearGradient></defs><circle cx="50" cy="50" r="12" fill="none" stroke="url(#g)" stroke-width="8"/><path d="M20 50 A 30 30 0 0 1 80 50 M15 50 L25 50 M75 50 L85 50" fill="none" stroke="url(#g)" stroke-width="8" stroke-linecap="round"/></svg>`;
-                        }}
-                    />
-                </div>
-            );
+        const ProjectLogo = ({ id }) => {
+            if (id === 'gaiai') {
+                return (
+                    <div className="w-12 h-12 rounded-2xl bg-black flex items-center justify-center shrink-0 overflow-hidden shadow-lg border border-white/10">
+                        <svg viewBox="0 0 100 100" className="w-9 h-9">
+                            <defs>
+                                <linearGradient id="gaiGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stopColor="#22d3ee" />
+                                <stop offset="50%" stopColor="#8b5cf6" />
+                                <stop offset="100%" stopColor="#d946ef" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="50" cy="50" r="12" fill="none" stroke="url(#gaiGradient)" strokeWidth="8" />
+                            <path d="M20 50 A 30 30 0 0 1 80 50" fill="none" stroke="url(#gaiGradient)" strokeWidth="8" strokeLinecap="round" />
+                            <path d="M15 50 L 25 50" stroke="url(#gaiGradient)" strokeWidth="8" strokeLinecap="round" />
+                            <path d="M75 50 L 85 50" stroke="url(#gaiGradient)" strokeWidth="8" strokeLinecap="round" />
+                            <path d="M20 50 A 30 30 0 0 0 80 50" fill="none" stroke="url(#gaiGradient)" strokeWidth="8" strokeLinecap="round" opacity="0.8" />
+                        </svg>
+                    </div>
+                );
+            }
+            if (id === 'nexus') {
+                return (
+                    <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shrink-0 shadow-lg border border-white/10">
+                        <svg viewBox="0 0 24 24" className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M12 2l9 4.9V17L12 22l-9-4.9V7z"/><path d="M12 12l9-5.1"/><path d="M12 12v10"/><path d="M12 12L3 6.9"/>
+                        </svg>
+                    </div>
+                );
+            }
+            return null;
         };
 
         // ==========================================
@@ -178,103 +181,108 @@
             }
         };
 
+        // ==========================================
+        // 4. 数据源 (包含多语言内容)
+        // ==========================================
         const DATA_CONTENT = {
-            id: 'gaiai',
-            name: 'GaiAI',
-            symbol: 'GAIX',
-            metrics: {
-                startTime: '16:00',
-                fundraising: '500万u',
-                initialCirculation: '16.42%',
-                poolPrice: '0.08U',
-                mcap: '$13M',
-                fdv: '$80M'
-            },
-            contractAddress: '0xc12efb9e4a1a753e7f6523482c569793c2271dbb',
-            exchanges: ['Binance Alpha', 'MEXC'],
-            tokenomics: [
-                { label: '45%', color: '#3B82F6' },
-                { label: '16%', color: '#8B5CF6' },
-                { label: '15%', color: '#10B981' },
-                { label: '10%', color: '#F59E0B' },
-                { label: '8%', color: '#EF4444' },
-                { label: '6%', color: '#6B7280' },
-            ],
-            langData: {
-                zh: {
-                    date: '11月29日',
-                    airdropReq: '256 Alpha 积分',
-                    airdropMethod: '先到先得',
-                    airdropNote: '每人400币 · 共25000名额',
-                    intro: '被称为“链上 Midjourney”，文字生成艺术并铸造 NFT，解决 AI 资产确权痛点。',
-                    bullish: ['首个创意 AI DAO', '分红机制可持续', 'Binance Alpha 流量'],
-                    bearish: ['初始流通 16% 偏高', '竞品 Midjourney 强', 'FDV 8000万相对较高'],
-                    tokenomicsLabels: ['社区', '团队', '流动性', '投资', '空投', '运营']
+            gaiai: {
+                id: 'gaiai',
+                name: 'GaiAI',
+                symbol: 'GAIX',
+                metrics: {
+                    startTime: '16:00',
+                    fundraising: '500万u',
+                    initialCirculation: '16.42%',
+                    poolPrice: '0.08U',
+                    mcap: '$13M',
+                    fdv: '$80M'
                 },
-                en: {
-                    date: 'Nov 29',
-                    airdropReq: '256 Alpha Points',
-                    airdropMethod: 'FCFS',
-                    airdropNote: '400 Tokens/Person · 25k Slots',
-                    intro: 'Dubbed "On-chain Midjourney", gen-AI art to NFT, solving AI asset rights.',
-                    bullish: ['First Creative AI DAO', 'Sustainable Dividends', 'Binance Alpha Traffic'],
-                    bearish: ['High Initial Circ 16%', 'Strong Rival Midjourney', 'Relatively High FDV'],
-                    tokenomicsLabels: ['Comm.', 'Team', 'Liquidity', 'Invest', 'Airdrop', 'Ops']
-                },
-                ja: {
-                    date: '11月29日',
-                    airdropReq: '256 Alpha ポイント',
-                    airdropMethod: '先着順',
-                    airdropNote: '1人400枚 · 25,000枠',
-                    intro: '「オンチェーン版Midjourney」と呼ばれ、AIアート生成とNFT化、権利問題を解決。',
-                    bullish: ['初のクリエイティブAI DAO', '持続可能な配当', 'バイナンスAlphaの注目度'],
-                    bearish: ['初期流通16%は高め', '競合Midjourneyが強力', 'FDVは割高感あり'],
-                    tokenomicsLabels: ['地域', 'チーム', '流動性', '投資', '配布', '運営']
-                },
-                ko: {
-                    date: '11월 29일',
-                    airdropReq: '256 Alpha 포인트',
-                    airdropMethod: '선착순',
-                    airdropNote: '인당 400개 · 25,000명',
-                    intro: 'AI 아트 생성 및 NFT 발행을 통한 자산 권리 문제 해결, "온체인 Midjourney"로 불림.',
-                    bullish: ['최초의 크리에이티브 AI DAO', '지속 가능한 배당', '바이낸스 Alpha 트래픽'],
-                    bearish: ['초기 유통 16% 다소 높음', 'Midjourney 경쟁 심화', '상대적으로 높은 FDV'],
-                    tokenomicsLabels: ['커뮤니티', '팀', '유동성', '투자', '에어드랍', '운영']
+                contractAddress: '0xc12efb9e4a1a753e7f6523482c569793c2271dbb',
+                exchanges: ['Binance Alpha', 'MEXC'],
+                tokenomics: [
+                    { label: '45%', color: '#3B82F6' },
+                    { label: '16%', color: '#8B5CF6' },
+                    { label: '15%', color: '#10B981' },
+                    { label: '10%', color: '#F59E0B' },
+                    { label: '8%', color: '#EF4444' },
+                    { label: '6%', color: '#6B7280' },
+                ],
+                // 多语言特定内容
+                langData: {
+                    zh: {
+                        date: '11月29日',
+                        airdropReq: '256 Alpha 积分',
+                        airdropMethod: '先到先得',
+                        airdropNote: '每人400币 · 共25000名额',
+                        intro: '被称为“链上 Midjourney”，文字生成艺术并铸造 NFT，解决 AI 资产确权痛点。',
+                        bullish: ['首个创意 AI DAO', '分红机制可持续', 'Binance Alpha 流量'],
+                        bearish: ['初始流通 16% 偏高', '竞品 Midjourney 强', 'FDV 8000万相对较高'],
+                        tokenomicsLabels: ['社区', '团队', '流动性', '投资', '空投', '运营']
+                    },
+                    en: {
+                        date: 'Nov 29',
+                        airdropReq: '256 Alpha Points',
+                        airdropMethod: 'FCFS',
+                        airdropNote: '400 Tokens/Person · 25k Slots',
+                        intro: 'Dubbed "On-chain Midjourney", gen-AI art to NFT, solving AI asset rights.',
+                        bullish: ['First Creative AI DAO', 'Sustainable Dividends', 'Binance Alpha Traffic'],
+                        bearish: ['High Initial Circ 16%', 'Strong Rival Midjourney', 'Relatively High FDV'],
+                        tokenomicsLabels: ['Comm.', 'Team', 'Liquidity', 'Invest', 'Airdrop', 'Ops']
+                    },
+                    ja: {
+                        date: '11月29日',
+                        airdropReq: '256 Alpha ポイント',
+                        airdropMethod: '先着順',
+                        airdropNote: '1人400枚 · 25,000枠',
+                        intro: '「オンチェーン版Midjourney」と呼ばれ、AIアート生成とNFT化、権利問題を解決。',
+                        bullish: ['初のクリエイティブAI DAO', '持続可能な配当', 'バイナンスAlphaの注目度'],
+                        bearish: ['初期流通16%は高め', '競合Midjourneyが強力', 'FDVは割高感あり'],
+                        tokenomicsLabels: ['地域', 'チーム', '流動性', '投資', '配布', '運営']
+                    },
+                    ko: {
+                        date: '11월 29일',
+                        airdropReq: '256 Alpha 포인트',
+                        airdropMethod: '선착순',
+                        airdropNote: '인당 400개 · 25,000명',
+                        intro: 'AI 아트 생성 및 NFT 발행을 통한 자산 권리 문제 해결, "온체인 Midjourney"로 불림.',
+                        bullish: ['최초의 크리에이티브 AI DAO', '지속 가능한 배당', '바이낸스 Alpha 트래픽'],
+                        bearish: ['초기 유통 16% 다소 높음', 'Midjourney 경쟁 심화', '상대적으로 높은 FDV'],
+                        tokenomicsLabels: ['커뮤니티', '팀', '유동성', '투자', '에어드랍', '운영']
+                    }
                 }
             }
         };
 
         // ==========================================
-        // 5. 核心指标组件 (圆角)
+        // 5. 核心指标组件
         // ==========================================
         const CompactMetric = ({ theme, Icon, label, value, color }) => (
-            <div className={`p-3 rounded-2xl text-center flex flex-col items-center justify-center ${theme.buttonBg} transition-transform active:scale-95`}>
-                <div className={`flex items-center gap-1 mb-1 opacity-60 ${theme.textSecondary}`}>
-                     <Icon size={12} />
-                     <span className="text-[10px] uppercase font-bold tracking-wider">{label}</span>
+            <div className={`p-2 rounded-xl text-center flex flex-col items-center justify-center ${theme.buttonBg}`}>
+                <div className={`flex items-center gap-1 mb-0.5 opacity-60 ${theme.textSecondary}`}>
+                     <Icon size={10} />
+                     <span className="text-[9px]">{label}</span>
                 </div>
-                <div className={`text-sm font-bold font-mono ${color}`}>{value}</div>
+                <div className={`text-sm font-bold ${color}`}>{value}</div>
             </div>
         );
 
         const App = () => {
             const [currentId, setCurrentId] = useState('gaiai');
-            const [lang, setLang] = useState('zh');
+            const [lang, setLang] = useState('zh'); // 默认中文
             const [showLangMenu, setShowLangMenu] = useState(false);
             const [copied, setCopied] = useState(false);
-            const [isDarkMode, setIsDarkMode] = useState(true);
             const [animate, setAnimate] = useState(false);
+            const [isDarkMode, setIsDarkMode] = useState(true);
 
-            const baseData = DATA_CONTENT;
-            // 安全读取语言数据，默认回退到英语
-            const langData = baseData.langData[lang] || baseData.langData['en'];
+            const baseData = DATA_CONTENT[currentId];
+            const langData = baseData.langData[lang] || baseData.langData['en']; // Fallback to EN
             const t = TRANSLATIONS[lang];
 
             useEffect(() => {
                 setAnimate(true);
                 const timer = setTimeout(() => setAnimate(false), 500);
                 return () => clearTimeout(timer);
-            }, [lang]);
+            }, [currentId, lang]);
 
             const handleCopy = () => {
                 const textToCopy = baseData.contractAddress;
@@ -294,54 +302,52 @@
             };
 
             const toggleTheme = () => setIsDarkMode(prev => !prev);
+            const toggleProject = () => setCurrentId(prev => prev === 'gaiai' ? 'nexus' : 'gaiai'); // Nexus data structure needs update if used, kept simple for demo
 
             const theme = {
-                bg: isDarkMode ? 'bg-black' : 'bg-gray-100',
+                bg: isDarkMode ? 'bg-gradient-to-br from-gray-900 via-slate-900 to-black' : 'bg-gray-100',
                 text: isDarkMode ? 'text-white' : 'text-gray-900',
                 textSecondary: isDarkMode ? 'text-gray-400' : 'text-gray-600',
-                cardBg: isDarkMode ? 'bg-[#151516] border-white/5' : 'bg-white border-gray-200',
-                borderColor: isDarkMode ? 'border-gray-800' : 'border-gray-300',
-                buttonBg: isDarkMode ? 'bg-[#1c1c1e]' : 'bg-gray-100',
-                hoverBg: isDarkMode ? 'hover:bg-[#2c2c2e]' : 'hover:bg-gray-200',
-                contractBg: isDarkMode ? 'bg-black/20 hover:bg-black/40' : 'bg-gray-200 hover:bg-gray-300',
-                contractText: isDarkMode ? 'text-gray-300 group-hover:text-white' : 'text-gray-700 group-hover:text-black',
-                chartColors: ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#6B7280']
+                cardBg: isDarkMode ? 'bg-[#1c1c1e] border-white/10' : 'bg-white border-gray-200',
+                accentColor: isDarkMode ? 'text-blue-400' : 'text-blue-600',
+                buttonBg: isDarkMode ? 'bg-white/10' : 'bg-gray-100',
             };
 
+            // Chart Data Construction
             let cumulativePercent = 0;
-            const chartData = (baseData.tokenomics || []).map((item, index) => {
-                const label = langData.tokenomicsLabels?.[index] || item.label;
-                const value = parseFloat(item.label);
+            const chartData = baseData.tokenomics.map((item, index) => {
+                const label = langData.tokenomicsLabels[index];
+                const value = parseFloat(item.label); // Extract number from "45%"
                 const startOffset = cumulativePercent;
                 cumulativePercent += value;
                 return { ...item, labelText: label, value, offset: startOffset };
             });
 
             return (
-                <div className={`min-h-screen w-full flex flex-col items-center justify-center p-0 md:p-6 ${theme.bg} ${theme.text}`} onClick={() => setShowLangMenu(false)}>
-                    
-                    {/* App Container */}
-                    <div className={`w-full max-w-[420px] md:h-auto min-h-[600px] flex flex-col rounded-[2.5rem] overflow-hidden shadow-2xl ${theme.cardBg} border ${theme.borderColor}`}>
+                <div className={`min-h-screen flex items-center justify-center p-4 ${theme.bg} ${theme.text}`} onClick={() => setShowLangMenu(false)}>
+                    <div className={`w-full max-w-[420px] ${theme.cardBg} rounded-[2rem] border shadow-2xl overflow-hidden relative transition-all duration-300 ${animate ? 'opacity-90 scale-[0.99]' : 'opacity-100 scale-100'}`}>
                         
                         {/* Header */}
-                        <header className={`px-6 py-5 flex justify-between items-center bg-opacity-50 backdrop-blur-md sticky top-0 z-10 ${theme.cardBg}`}>
+                        <div className="px-5 pt-5 pb-2 flex justify-between items-center relative z-20">
                             <div className="flex items-center gap-2">
-                                <BinanceLogo />
+                                <img src="https://pbs.twimg.com/profile_images/1774903774009540608/JCc33dBA_400x400.jpg" alt="Binance Logo" className="w-5 h-5 rounded-full" />
                                 <span className="text-sm font-black tracking-widest uppercase text-[#FCD535]">Binance Alpha</span>
                             </div>
                             <div className="flex gap-2 relative">
+                                {/* 语言切换按钮 */}
                                 <div className="relative" onClick={(e) => e.stopPropagation()}>
-                                    <button onClick={() => setShowLangMenu(!showLangMenu)} className={`p-2 rounded-full ${theme.buttonBg} ${theme.hoverBg} transition-colors`}>
-                                        <Globe size={16}/>
-                                        <span className="text-xs ml-1 font-bold">{LANGUAGES[lang].flag}</span>
+                                    <button onClick={() => setShowLangMenu(!showLangMenu)} className={`p-1.5 rounded-full ${theme.buttonBg} flex items-center justify-center`}>
+                                        <Globe size={14}/>
+                                        <span className="text-[10px] ml-1 font-bold">{LANGUAGES[lang].flag}</span>
                                     </button>
+                                    
                                     {showLangMenu && (
-                                        <div className={`absolute right-0 top-full mt-2 w-32 rounded-2xl overflow-hidden shadow-xl border ${theme.borderColor} ${theme.cardBg} z-50`}>
+                                        <div className={`absolute right-0 top-full mt-2 w-32 rounded-xl overflow-hidden shadow-xl border ${isDarkMode ? 'bg-[#252525] border-white/10' : 'bg-white border-gray-200'}`}>
                                             {Object.keys(LANGUAGES).map((key) => (
                                                 <button 
                                                     key={key}
                                                     onClick={() => { setLang(key); setShowLangMenu(false); }}
-                                                    className={`w-full text-left px-4 py-3 text-xs font-bold flex items-center gap-2 ${theme.hoverBg}`}
+                                                    className={`w-full text-left px-4 py-2 text-xs font-medium flex items-center gap-2 hover:opacity-80 ${lang === key ? (isDarkMode ? 'bg-white/10' : 'bg-gray-100') : ''}`}
                                                 >
                                                     <span>{LANGUAGES[key].flag}</span>
                                                     <span>{LANGUAGES[key].name}</span>
@@ -350,150 +356,144 @@
                                         </div>
                                     )}
                                 </div>
-                                <button onClick={toggleTheme} className={`p-2 rounded-full ${theme.buttonBg} ${theme.hoverBg} transition-colors`}><Sun size={16}/></button>
-                            </div>
-                        </header>
 
-                        {/* Content Area */}
-                        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-5">
-                            
-                            {/* Top Info */}
-                            <div className="flex flex-col justify-between items-start gap-4">
-                                <div className="w-full flex justify-between items-start">
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-4 mb-2">
-                                            <ProjectLogo id={baseData.id} />
-                                            <h1 className="text-3xl font-black uppercase tracking-tight flex flex-wrap items-center gap-2">
-                                                {baseData.name}
-                                                <span className="text-xl text-gray-500 font-bold">({baseData.symbol})</span>
-                                            </h1>
-                                        </div>
-                                        <div className="flex flex-col pl-1">
-                                            <span className={`text-[10px] uppercase font-bold tracking-wider ${theme.textSecondary} mb-0.5`}>{t.source}</span>
-                                            <a 
-                                                href="https://x.com/0xko1" 
-                                                target="_blank" 
-                                                rel="noopener noreferrer"
-                                                className={`text-2xl tracking-tight font-handle allow-select hover:opacity-80 transition-opacity ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
-                                                title="点击访问推特主页"
-                                            >
-                                                @0xko1
-                                            </a>
-                                        </div>
+                                <button onClick={toggleTheme} className={`p-1.5 rounded-full ${theme.buttonBg}`}><Sun size={14}/></button>
+                            </div>
+                        </div>
+
+                        {/* Main Content */}
+                        <div className="px-5 pb-6">
+                            {/* Project Info Header */}
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="flex-1">
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <ProjectLogo id={baseData.id} />
+                                        <h1 className="text-3xl font-bold leading-tight tracking-tight">{baseData.name}</h1>
+                                        <span className="text-xl font-medium text-gray-500 font-bold">({baseData.symbol})</span>
                                     </div>
-                                    <div className="flex flex-col items-end gap-1">
-                                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold bg-yellow-500/10 text-[#FCD535] border border-yellow-500/20`}>{t.tag}</span>
-                                        <span className={`text-xs font-bold ${theme.textSecondary}`}>{langData.date}</span>
+                                    <div className="flex flex-col pl-1">
+                                        <span className={`text-[10px] uppercase font-bold tracking-wider ${theme.textSecondary} mb-0.5`}>{t.source}</span>
+                                        {/* 修改：将 span 改为 a 标签，支持点击跳转 */}
+                                        <a 
+                                            href="https://x.com/0xko1" 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className={`text-2xl tracking-tight font-handle allow-select hover:opacity-80 transition-opacity ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
+                                            title="点击访问推特主页"
+                                        >
+                                            @0xko1
+                                        </a>
                                     </div>
+                                </div>
+                                <div className="text-right flex flex-col items-end gap-1">
+                                    <div className={`text-xs font-bold px-2 py-1 rounded-lg ${isDarkMode ? 'bg-yellow-500/20 text-yellow-400' : 'bg-yellow-100 text-yellow-700'}`}>{t.tag}</div>
+                                    <div className={`text-xs font-medium ${theme.textSecondary} mt-1`}>{langData.date}</div>
                                 </div>
                             </div>
 
-                            {/* Metrics - 3cols */}
-                            <div className="grid grid-cols-3 gap-2">
+                            {/* Metrics Grid */}
+                            <div className="grid grid-cols-3 gap-2 mb-3">
                                 <CompactMetric theme={theme} Icon={Clock} label={t.open} value={baseData.metrics.startTime} color="text-blue-500" />
                                 <CompactMetric theme={theme} Icon={DollarSign} label={t.raised} value={baseData.metrics.fundraising} color="text-green-500" />
                                 <CompactMetric theme={theme} Icon={PieChart} label={t.circ} value={baseData.metrics.initialCirculation} color="text-purple-500" />
+                                
                                 <CompactMetric theme={theme} Icon={BarChart3} label={t.pool} value={baseData.metrics.poolPrice} color="text-orange-500" />
                                 <CompactMetric theme={theme} Icon={Wallet} label={t.mcap} value={baseData.metrics.mcap} color="text-pink-500" />
                                 <CompactMetric theme={theme} Icon={Sparkles} label={t.fdv} value={baseData.metrics.fdv} color="text-indigo-500" />
                             </div>
 
-                            {/* Airdrop Info */}
-                            <div className={`p-4 rounded-3xl border ${theme.borderColor} bg-gradient-to-r from-yellow-900/10 to-transparent flex flex-col gap-3`}>
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2.5 rounded-full bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
-                                        <Zap size={18} />
+                            {/* Airdrop Bar */}
+                            <div className={`flex flex-col px-3 py-2.5 rounded-xl mb-3 ${isDarkMode ? 'bg-yellow-500/10' : 'bg-yellow-50'} border border-yellow-500/20`}>
+                                <div className="flex items-center justify-between mb-1.5">
+                                    <div className="flex items-center gap-2">
+                                        <Zap size={14} className="text-yellow-500" />
+                                        <span className="text-xs font-bold text-yellow-500">{t.airdrop}</span>
                                     </div>
-                                    <div>
-                                        <div className="text-[10px] font-bold uppercase text-yellow-500 mb-0.5">{t.airdrop}</div>
-                                        <div className="text-base font-bold">{langData.airdropReq}</div>
-                                    </div>
+                                    <div className="text-xs font-bold text-yellow-500">{langData.airdropReq}</div>
                                 </div>
-                                <div className={`text-xs border-t ${theme.borderColor} pt-2 pl-1`}>
-                                    <div className={`${theme.textSecondary} mb-0.5`}>{langData.airdropMethod}</div>
-                                    <div className="font-bold">{langData.airdropNote}</div>
+                                <div className="flex justify-between items-center text-[10px] opacity-80 border-t border-yellow-500/10 pt-1.5 mt-0.5">
+                                    <span className={`${theme.textSecondary}`}>{langData.airdropMethod}</span>
+                                    <span className={`${theme.textSecondary} font-medium`}>{langData.airdropNote}</span>
                                 </div>
                             </div>
 
-                            {/* Analysis - 2cols */}
-                            <div className="grid grid-cols-2 gap-3">
-                                <div className={`p-4 rounded-3xl ${theme.buttonBg} border ${theme.borderColor}`}>
+                            {/* Analysis */}
+                            <div className="grid grid-cols-2 gap-2 mb-3">
+                                <div className={`p-2.5 rounded-xl border ${isDarkMode ? 'bg-green-500/5 border-green-500/20' : 'bg-green-50 border-green-200'}`}>
                                     <div className="flex items-center gap-1.5 mb-2">
-                                        <div className="p-1 rounded-full bg-green-500/20 text-green-500"><TrendingUp size={14} /></div>
-                                        <h3 className="text-xs font-black text-green-500">{t.bullish}</h3>
+                                        <TrendingUp size={14} className="text-green-500" />
+                                        <span className="text-xs font-bold text-green-500">{t.bullish}</span>
                                     </div>
-                                    <ul className="space-y-1.5">
+                                    <ul className="space-y-1">
                                         {langData.bullish.map((item, i) => (
-                                            <li key={i} className={`text-[10px] leading-tight font-medium flex items-start gap-1.5 ${theme.textSecondary}`}>
-                                                <span className="text-green-500 mt-1 w-1 h-1 rounded-full bg-green-500 shrink-0"></span> {item}
-                                            </li>
+                                            <li key={i} className={`text-[10px] leading-tight ${theme.textSecondary}`}>• {item}</li>
                                         ))}
                                     </ul>
                                 </div>
-                                <div className={`p-4 rounded-3xl ${theme.buttonBg} border ${theme.borderColor}`}>
+                                <div className={`p-2.5 rounded-xl border ${isDarkMode ? 'bg-red-500/5 border-red-500/20' : 'bg-red-50 border-red-200'}`}>
                                     <div className="flex items-center gap-1.5 mb-2">
-                                        <div className="p-1 rounded-full bg-red-500/20 text-red-500"><TrendingDown size={14} /></div>
-                                        <h3 className="text-xs font-black text-red-500">{t.bearish}</h3>
+                                        <TrendingDown size={14} className="text-red-500" />
+                                        <span className="text-xs font-bold text-red-500">{t.bearish}</span>
                                     </div>
-                                    <ul className="space-y-1.5">
+                                    <ul className="space-y-1">
                                         {langData.bearish.map((item, i) => (
-                                            <li key={i} className={`text-[10px] leading-tight font-medium flex items-start gap-1.5 ${theme.textSecondary}`}>
-                                                <span className="text-red-500 mt-1 w-1 h-1 rounded-full bg-red-500 shrink-0"></span> {item}
-                                            </li>
+                                            <li key={i} className={`text-[10px] leading-tight ${theme.textSecondary}`}>• {item}</li>
                                         ))}
                                     </ul>
                                 </div>
                             </div>
 
-                            {/* Intro & Tokenomics */}
-                            <div className={`p-5 rounded-3xl border ${theme.borderColor} ${theme.cardBg}`}>
-                                <div className="flex items-center gap-2 mb-3 opacity-70">
-                                    <Info size={14} />
-                                    <span className="text-[10px] font-black uppercase">{t.intro}</span>
+                            {/* Intro & Tokenomics Chart */}
+                            <div className="space-y-2 mb-4">
+                                <div className={`p-2.5 rounded-xl ${theme.buttonBg}`}>
+                                    <div className="flex items-center gap-1.5 mb-1 opacity-70">
+                                        <Info size={12} />
+                                        <span className="text-[10px] font-bold uppercase">{t.intro}</span>
+                                    </div>
+                                    <p className={`text-[11px] leading-4 ${theme.textSecondary}`}>{langData.intro}</p>
                                 </div>
-                                <p className={`text-xs leading-relaxed mb-5 font-medium ${theme.textSecondary}`}>{langData.intro}</p>
                                 
-                                <div className="flex items-center gap-4">
-                                    <div className="relative w-16 h-16 shrink-0">
+                                <div className="flex items-center gap-4 py-1 px-1">
+                                    <div className="relative w-20 h-20 flex-shrink-0">
                                         <svg viewBox="0 0 40 40" className="w-full h-full -rotate-90">
                                             {chartData.map((slice, i) => (
-                                                <circle key={i} cx="20" cy="20" r="15.915" fill="transparent" stroke={slice.color} strokeWidth="6" strokeDasharray={`${slice.value} ${100 - slice.value}`} strokeDashoffset={-slice.offset} />
+                                                <circle
+                                                    key={i} cx="20" cy="20" r="15.915" fill="transparent" stroke={slice.color} strokeWidth="5" strokeDasharray={`${slice.value} ${100 - slice.value}`} strokeDashoffset={-slice.offset} className="transition-all duration-500 ease-out"
+                                                />
                                             ))}
                                         </svg>
-                                        <div className="absolute inset-0 flex items-center justify-center text-[6px] font-black">{t.total}</div>
+                                        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                            <span className={`text-[8px] font-bold ${theme.textSecondary}`}>{t.total}</span>
+                                            <span className="text-[10px] font-black">100%</span>
+                                        </div>
                                     </div>
-                                    <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 w-full">
+                                    <div className="flex-1 grid grid-cols-2 gap-x-2 gap-y-1.5">
                                         {chartData.map((item, i) => (
-                                            <div key={i} className={`flex items-center justify-between`}>
+                                            <div key={i} className="flex items-center justify-between">
                                                 <div className="flex items-center gap-1.5">
-                                                    <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: item.color }}></div>
-                                                    <span className={`text-[9px] font-bold ${theme.textSecondary}`}>{item.labelText}</span>
+                                                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }}></div>
+                                                    <span className={`text-[10px] ${theme.textSecondary}`}>{item.labelText}</span>
                                                 </div>
-                                                <span className="text-[9px] font-mono font-bold">{item.label}</span>
+                                                <span className="text-[10px] font-bold font-mono">{item.label}</span>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Contract & Footer */}
-                            <div className={`p-5 rounded-3xl border ${theme.borderColor} ${theme.cardBg} flex flex-col gap-4`}>
-                                <div>
-                                    <div className="text-[10px] font-black uppercase mb-2 opacity-50">EXCHANGES</div>
-                                    <div className="flex flex-wrap gap-2 mb-4">
+                            {/* Footer */}
+                            <div className={`pt-3 border-t ${isDarkMode ? 'border-white/10' : 'border-gray-200'}`}>
+                                <div className="flex justify-between items-center mb-2">
+                                    <div className="flex gap-1">
                                         {baseData.exchanges.map((ex, i) => (
-                                            <span key={i} className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border ${theme.borderColor} ${i===0 ? 'text-blue-400 bg-blue-900/10' : 'text-gray-400'}`}>{ex}</span>
+                                            <span key={i} className={`text-[9px] px-1.5 py-0.5 rounded ${i===0 ? 'bg-blue-500 text-white' : theme.buttonBg}`}>{ex}</span>
                                         ))}
                                     </div>
-                                    <div className="text-[10px] font-black uppercase mb-1 opacity-50">{t.chain}</div>
+                                    <div className="text-[10px] text-gray-500">{t.chain}</div>
                                 </div>
-                                
-                                <div onClick={handleCopy} className={`p-3 rounded-xl border ${theme.borderColor} ${theme.contractBg} cursor-pointer transition-colors group`}>
-                                    <div className="flex justify-between items-center mb-1">
-                                        <span className="text-[9px] font-bold text-gray-500">CONTRACT</span>
-                                        {copied ? <Check size={10} className="text-green-500"/> : <Copy size={10} className="text-gray-500 group-hover:text-current"/>}
-                                    </div>
-                                    <code className={`text-[10px] font-mono break-all ${theme.contractText} transition-colors`}>{baseData.contractAddress}</code>
+                                <div onClick={handleCopy} className={`flex items-center justify-between p-2 rounded-lg cursor-pointer ${isDarkMode ? 'bg-black/30' : 'bg-gray-50'} active:scale-95 transition-transform`}>
+                                    <code className="text-[10px] font-mono opacity-70 break-all mr-2">{baseData.contractAddress}</code>
+                                    {copied ? <Check size={12} className="text-green-500 shrink-0"/> : <Copy size={12} className="opacity-50 shrink-0"/>}
                                 </div>
                             </div>
 
