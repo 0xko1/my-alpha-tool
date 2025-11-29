@@ -123,7 +123,8 @@
                 total: '总量',
                 chain: 'BNB Chain',
                 copy: '复制',
-                copied: '已复制'
+                copied: '已复制',
+                follow: '关注'
             },
             en: {
                 source: 'Source (Twitter)',
@@ -141,7 +142,8 @@
                 total: 'TOTAL',
                 chain: 'BNB Chain',
                 copy: 'Copy',
-                copied: 'Copied'
+                copied: 'Copied',
+                follow: 'Follow'
             },
             ja: {
                 source: 'ソース (Twitter)',
@@ -159,7 +161,8 @@
                 total: '合計',
                 chain: 'BNB Chain',
                 copy: 'コピー',
-                copied: '完了'
+                copied: '完了',
+                follow: 'フォロー'
             },
             ko: {
                 source: '출처 (Twitter)',
@@ -177,7 +180,8 @@
                 total: '총계',
                 chain: 'BNB Chain',
                 copy: '복사',
-                copied: '완료'
+                copied: '완료',
+                follow: '팔로우'
             }
         };
 
@@ -373,15 +377,22 @@
                                     </div>
                                     <div className="flex flex-col pl-1">
                                         <span className={`text-[10px] uppercase font-bold tracking-wider ${theme.textSecondary} mb-0.5`}>{t.source}</span>
-                                        {/* 修改：将 span 改为 a 标签，支持点击跳转 */}
+                                        {/* 修改：包含关注按钮的推特链接 */}
                                         <a 
                                             href="https://x.com/0xko1" 
                                             target="_blank" 
                                             rel="noopener noreferrer"
-                                            className={`text-2xl tracking-tight font-handle allow-select hover:opacity-80 transition-opacity ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
+                                            className="group flex items-center gap-2 cursor-pointer w-fit"
                                             title="点击访问推特主页"
                                         >
-                                            @0xko1
+                                            <span className={`text-2xl tracking-tight font-handle allow-select group-hover:opacity-80 transition-opacity ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                                                @0xko1
+                                            </span>
+                                            {/* 关注按钮 */}
+                                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-0.5 transition-all transform group-hover:scale-105 border ${isDarkMode ? 'bg-white text-black border-white' : 'bg-black text-white border-black'} group-hover:bg-blue-500 group-hover:border-blue-500 group-hover:text-white`}>
+                                                <span>+</span>
+                                                <span>{t.follow}</span>
+                                            </span>
                                         </a>
                                     </div>
                                 </div>
