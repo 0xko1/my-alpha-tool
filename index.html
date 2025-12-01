@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Binance Alpha Analyzer</title>
+    <title>Binance Alpha Analyzer - RAYLS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -64,32 +64,20 @@
         // 2. Logo 组件
         // ==========================================
         const ProjectLogo = ({ id }) => {
-            if (id === 'gaiai') {
+            if (id === 'rayls') {
                 return (
                     <div className="w-12 h-12 rounded-2xl bg-black flex items-center justify-center shrink-0 overflow-hidden shadow-lg border border-white/10">
-                        <svg viewBox="0 0 100 100" className="w-9 h-9">
-                            <defs>
-                                <linearGradient id="gaiGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stopColor="#22d3ee" />
-                                <stop offset="50%" stopColor="#8b5cf6" />
-                                <stop offset="100%" stopColor="#d946ef" />
-                                </linearGradient>
-                            </defs>
-                            <circle cx="50" cy="50" r="12" fill="none" stroke="url(#gaiGradient)" strokeWidth="8" />
-                            <path d="M20 50 A 30 30 0 0 1 80 50" fill="none" stroke="url(#gaiGradient)" strokeWidth="8" strokeLinecap="round" />
-                            <path d="M15 50 L 25 50" stroke="url(#gaiGradient)" strokeWidth="8" strokeLinecap="round" />
-                            <path d="M75 50 L 85 50" stroke="url(#gaiGradient)" strokeWidth="8" strokeLinecap="round" />
-                            <path d="M20 50 A 30 30 0 0 0 80 50" fill="none" stroke="url(#gaiGradient)" strokeWidth="8" strokeLinecap="round" opacity="0.8" />
-                        </svg>
-                    </div>
-                );
-            }
-            if (id === 'nexus') {
-                return (
-                    <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shrink-0 shadow-lg border border-white/10">
-                        <svg viewBox="0 0 24 24" className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M12 2l9 4.9V17L12 22l-9-4.9V7z"/><path d="M12 12l9-5.1"/><path d="M12 12v10"/><path d="M12 12L3 6.9"/>
-                        </svg>
+                        {/* 使用 unavatar 获取推特头像 */}
+                        <img 
+                            src="https://unavatar.io/twitter/RaylsLabs" 
+                            alt="Rayls Logo" 
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                                e.target.onerror = null; 
+                                e.target.style.display = 'none';
+                                e.target.parentNode.innerHTML = '<svg viewBox="0 0 24 24" class="w-8 h-8 text-white" fill="currentColor"><path d="M4 4h16v16H4z"/></svg>'; // Fallback
+                            }}
+                        />
                     </div>
                 );
             }
@@ -113,15 +101,15 @@
                 open: '开盘(UTC+8)',
                 raised: '融资额',
                 circ: '初始流通',
-                pool: '池子价',
+                pool: '池子/盘前价', // 更新
                 mcap: '流通市值',
                 fdv: 'FDV',
-                airdrop: '空投门槛 (Alpha)',
+                airdrop: '空投/TGE',
                 bullish: '利好',
                 bearish: '风险',
                 intro: '简介',
                 total: '总量',
-                chain: 'BNB Chain',
+                chain: 'Uni/Parfin',
                 copy: '复制',
                 copied: '已复制',
                 follow: '关注'
@@ -132,15 +120,15 @@
                 open: 'Open(UTC+8)',
                 raised: 'Raised',
                 circ: 'Init. Circ',
-                pool: 'Pool Price',
+                pool: 'Pool/Pre-Mkt', // 更新
                 mcap: 'M.Cap',
                 fdv: 'FDV',
-                airdrop: 'Airdrop (Alpha)',
+                airdrop: 'Airdrop/TGE',
                 bullish: 'Bullish',
                 bearish: 'Bearish',
                 intro: 'Intro',
                 total: 'TOTAL',
-                chain: 'BNB Chain',
+                chain: 'Uni/Parfin',
                 copy: 'Copy',
                 copied: 'Copied',
                 follow: 'Follow'
@@ -151,15 +139,15 @@
                 open: '開始(UTC+8)',
                 raised: '調達額',
                 circ: '初期流通',
-                pool: 'プール価格',
+                pool: 'プール/市場前', // 更新
                 mcap: '時価総額',
                 fdv: 'FDV',
-                airdrop: 'エアドロ条件',
+                airdrop: 'TGE情報',
                 bullish: '強気材料',
                 bearish: '懸念点',
                 intro: '概要',
                 total: '合計',
-                chain: 'BNB Chain',
+                chain: 'Uni/Parfin',
                 copy: 'コピー',
                 copied: '完了',
                 follow: 'フォロー'
@@ -170,15 +158,15 @@
                 open: '개장(UTC+8)',
                 raised: '모금액',
                 circ: '초기유통',
-                pool: '풀 가격',
+                pool: '풀/프리마켓', // 更新
                 mcap: '유통시총',
                 fdv: 'FDV',
-                airdrop: '에어드랍',
+                airdrop: 'TGE 정보',
                 bullish: '호재',
                 bearish: '리스크',
                 intro: '소개',
                 total: '총계',
-                chain: 'BNB Chain',
+                chain: 'Uni/Parfin',
                 copy: '복사',
                 copied: '완료',
                 follow: '팔로우'
@@ -189,69 +177,68 @@
         // 4. 数据源 (包含多语言内容)
         // ==========================================
         const DATA_CONTENT = {
-            gaiai: {
-                id: 'gaiai',
-                name: 'GaiAI',
-                symbol: 'GAIX',
+            rayls: {
+                id: 'rayls',
+                name: 'RAYLS',
+                symbol: 'RLS',
                 metrics: {
-                    startTime: '16:00',
-                    fundraising: '500万u',
-                    initialCirculation: '16.42%',
-                    poolPrice: '0.08U',
-                    mcap: '$13M',
-                    fdv: '$80M'
+                    startTime: '12/1 19:00', // 19:00 UTC+8
+                    fundraising: '$25M-38M',
+                    initialCirculation: '15%',
+                    poolPrice: '$0.08',
+                    mcap: '$120M',
+                    fdv: '$800M'
                 },
-                contractAddress: '0xc12efb9e4a1a753e7f6523482c569793c2271dbb',
-                exchanges: ['Binance Alpha', 'MEXC'],
+                contractAddress: 'TBA (To Be Announced)',
+                exchanges: ['Binance Alpha', 'Pending'],
                 tokenomics: [
-                    { label: '45%', color: '#3B82F6' },
-                    { label: '16%', color: '#8B5CF6' },
-                    { label: '15%', color: '#10B981' },
-                    { label: '10%', color: '#F59E0B' },
-                    { label: '8%', color: '#EF4444' },
-                    { label: '6%', color: '#6B7280' },
+                    { label: '35%', color: '#3B82F6' }, // Foundation + Community
+                    { label: '22%', color: '#8B5CF6' }, // Investors
+                    { label: '17%', color: '#10B981' }, // Core Team
+                    { label: '15%', color: '#F59E0B' }, // TGE Liquidity
+                    { label: '11%', color: '#EF4444' }, // Initial Devs
                 ],
                 // 多语言特定内容
                 langData: {
                     zh: {
-                        date: '11月29日',
-                        airdropReq: '256 Alpha 积分',
-                        airdropMethod: '先到先得',
-                        airdropNote: '每人400币 · 共25000名额',
-                        intro: '被称为“链上 Midjourney”，文字生成艺术并铸造 NFT，解决 AI 资产确权痛点。',
-                        bullish: ['首个创意 AI DAO', '分红机制可持续', 'Binance Alpha 流量'],
-                        bearish: ['初始流通 16% 偏高', '竞品 Midjourney 强', 'FDV 8000万相对较高'],
-                        tokenomicsLabels: ['社区', '团队', '流动性', '投资', '空投', '运营']
+                        date: '12月1日',
+                        airdropReq: 'TGE 启动',
+                        airdropMethod: '任务奖励',
+                        airdropNote: 'TGE 19:00 (UTC+8) · 15%初始流通', // 更新备注时间
+                        intro: '连接TradFi与DeFi的L1区块链，由Parfin开发，Tether投资。支持合规RWA代币化与隐私保护，致力于构建“银行区块链”。',
+                        bullish: ['Tether/JPMorgan等顶级机构背书', '已处理$60M+真实RWA资产', '独特的隐私+合规模块化设计'],
+                        bearish: ['FDV $800M 相对较高', '高度依赖传统机构采用速度', 'RWA赛道竞争激烈'],
+                        tokenomicsLabels: ['基金会/社区', '投资者', '核心团队', '初始流动性', '初始开发']
                     },
                     en: {
-                        date: 'Nov 29',
-                        airdropReq: '256 Alpha Points',
-                        airdropMethod: 'FCFS',
-                        airdropNote: '400 Tokens/Person · 25k Slots',
-                        intro: 'Dubbed "On-chain Midjourney", gen-AI art to NFT, solving AI asset rights.',
-                        bullish: ['First Creative AI DAO', 'Sustainable Dividends', 'Binance Alpha Traffic'],
-                        bearish: ['High Initial Circ 16%', 'Strong Rival Midjourney', 'Relatively High FDV'],
-                        tokenomicsLabels: ['Comm.', 'Team', 'Liquidity', 'Invest', 'Airdrop', 'Ops']
+                        date: 'Dec 1',
+                        airdropReq: 'TGE Launch',
+                        airdropMethod: 'Task Rewards',
+                        airdropNote: 'TGE 11:00 UTC · 15% Init Circ',
+                        intro: 'L1 Blockchain bridging TradFi & DeFi. Developed by Parfin, invested by Tether. Focuses on compliant RWA & privacy.',
+                        bullish: ['Backed by Tether/JPMorgan', 'Processed $60M+ Real RWAs', 'Unique Privacy+Compliance Design'],
+                        bearish: ['Relatively High FDV ($800M)', 'Dependent on Institutional Adoption', 'Stiff Competition in RWA'],
+                        tokenomicsLabels: ['Found./Comm.', 'Investors', 'Core Team', 'Liquidity', 'Init. Devs']
                     },
                     ja: {
-                        date: '11月29日',
-                        airdropReq: '256 Alpha ポイント',
-                        airdropMethod: '先着順',
-                        airdropNote: '1人400枚 · 25,000枠',
-                        intro: '「オンチェーン版Midjourney」と呼ばれ、AIアート生成とNFT化、権利問題を解決。',
-                        bullish: ['初のクリエイティブAI DAO', '持続可能な配当', 'バイナンスAlphaの注目度'],
-                        bearish: ['初期流通16%は高め', '競合Midjourneyが強力', 'FDVは割高感あり'],
-                        tokenomicsLabels: ['地域', 'チーム', '流動性', '投資', '配布', '運営']
+                        date: '12月1日',
+                        airdropReq: 'TGE開始',
+                        airdropMethod: 'タスク報酬',
+                        airdropNote: '19:00 (UTC+8) · 初期流通15%',
+                        intro: 'TradFiとDeFiを繋ぐL1ブロックチェーン。Parfin開発、Tether出資。コンプライアンス準拠のRWAとプライバシーに特化。',
+                        bullish: ['Tether/JPMorgan等の機関支援', '$60M+の実RWA処理実績', '独自のプライバシー+コンプラ設計'],
+                        bearish: ['FDV $800Mは比較的高め', '機関採用のスピードに依存', 'RWA分野の激しい競争'],
+                        tokenomicsLabels: ['財団/地域', '投資家', 'チーム', '流動性', '開発者']
                     },
                     ko: {
-                        date: '11월 29일',
-                        airdropReq: '256 Alpha 포인트',
-                        airdropMethod: '선착순',
-                        airdropNote: '인당 400개 · 25,000명',
-                        intro: 'AI 아트 생성 및 NFT 발행을 통한 자산 권리 문제 해결, "온체인 Midjourney"로 불림.',
-                        bullish: ['최초의 크리에이티브 AI DAO', '지속 가능한 배당', '바이낸스 Alpha 트래픽'],
-                        bearish: ['초기 유통 16% 다소 높음', 'Midjourney 경쟁 심화', '상대적으로 높은 FDV'],
-                        tokenomicsLabels: ['커뮤니티', '팀', '유동성', '투자', '에어드랍', '운영']
+                        date: '12월 1일',
+                        airdropReq: 'TGE 시작',
+                        airdropMethod: '미션 보상',
+                        airdropNote: '19:00 (UTC+8) · 초기유통 15%',
+                        intro: 'TradFi와 DeFi를 연결하는 L1 블록체인. Parfin 개발, Tether 투자. 규제 준수 RWA 및 프라이버시 중점.',
+                        bullish: ['Tether/JPMorgan 등 기관 투자', '$60M+ 실제 RWA 처리', '독보적인 프라이버시/규제 설계'],
+                        bearish: ['상대적으로 높은 FDV ($800M)', '기관 도입 속도에 의존', 'RWA 섹터 경쟁 심화'],
+                        tokenomicsLabels: ['재단/커뮤니티', '투자자', '팀', '유동성', '개발자']
                     }
                 }
             }
@@ -271,7 +258,7 @@
         );
 
         const App = () => {
-            const [currentId, setCurrentId] = useState('gaiai');
+            const [currentId, setCurrentId] = useState('rayls');
             const [lang, setLang] = useState('zh'); // 默认中文
             const [showLangMenu, setShowLangMenu] = useState(false);
             const [copied, setCopied] = useState(false);
@@ -289,6 +276,7 @@
             }, [currentId, lang]);
 
             const handleCopy = () => {
+                if (baseData.contractAddress.includes('TBA')) return; // Disable copy for TBA
                 const textToCopy = baseData.contractAddress;
                 const textArea = document.createElement("textarea");
                 textArea.value = textToCopy;
@@ -306,7 +294,6 @@
             };
 
             const toggleTheme = () => setIsDarkMode(prev => !prev);
-            const toggleProject = () => setCurrentId(prev => prev === 'gaiai' ? 'nexus' : 'gaiai'); // Nexus data structure needs update if used, kept simple for demo
 
             const theme = {
                 bg: isDarkMode ? 'bg-gradient-to-br from-gray-900 via-slate-900 to-black' : 'bg-gray-100',
@@ -377,7 +364,7 @@
                                     </div>
                                     <div className="flex flex-col pl-1">
                                         <span className={`text-[10px] uppercase font-bold tracking-wider ${theme.textSecondary} mb-0.5`}>{t.source}</span>
-                                        {/* 修改：包含关注按钮的推特链接 */}
+                                        {/* 修改：包含关注按钮的推特链接 + 头像 */}
                                         <a 
                                             href="https://x.com/0xko1" 
                                             target="_blank" 
@@ -385,9 +372,18 @@
                                             className="group flex items-center gap-2 cursor-pointer w-fit"
                                             title="点击访问推特主页"
                                         >
-                                            <span className={`text-2xl tracking-tight font-handle allow-select group-hover:opacity-80 transition-opacity ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                                                @0xko1
-                                            </span>
+                                            <div className="flex items-center gap-2">
+                                                {/* 用户头像 */}
+                                                <img 
+                                                    src="https://pbs.twimg.com/profile_images/1983480781898231809/dAhgN1BY_400x400.jpg" 
+                                                    alt="User" 
+                                                    className="w-5 h-5 rounded-full border border-white/20"
+                                                    onError={(e) => { e.target.style.display = 'none'; }}
+                                                />
+                                                <span className={`text-2xl tracking-tight font-handle allow-select group-hover:opacity-80 transition-opacity ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                                                    @0xko1
+                                                </span>
+                                            </div>
                                             {/* 关注按钮 */}
                                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-0.5 transition-all transform group-hover:scale-105 border ${isDarkMode ? 'bg-white text-black border-white' : 'bg-black text-white border-black'} group-hover:bg-blue-500 group-hover:border-blue-500 group-hover:text-white`}>
                                                 <span>+</span>
@@ -504,7 +500,7 @@
                                 </div>
                                 <div onClick={handleCopy} className={`flex items-center justify-between p-2 rounded-lg cursor-pointer ${isDarkMode ? 'bg-black/30' : 'bg-gray-50'} active:scale-95 transition-transform`}>
                                     <code className="text-[10px] font-mono opacity-70 break-all mr-2">{baseData.contractAddress}</code>
-                                    {copied ? <Check size={12} className="text-green-500 shrink-0"/> : <Copy size={12} className="opacity-50 shrink-0"/>}
+                                    {copied ? <Check size={12} className="text-green-500 shrink-0"/> : (!baseData.contractAddress.includes('TBA') && <Copy size={12} className="opacity-50 shrink-0"/>)}
                                 </div>
                             </div>
 
