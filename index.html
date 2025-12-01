@@ -192,19 +192,20 @@
                 contractAddress: 'TBA (To Be Announced)',
                 exchanges: ['Binance Alpha', 'Pending'],
                 tokenomics: [
-                    { label: '35%', color: '#3B82F6' }, // Foundation + Community
-                    { label: '22%', color: '#8B5CF6' }, // Investors
-                    { label: '17%', color: '#10B981' }, // Core Team
-                    { label: '15%', color: '#F59E0B' }, // TGE Liquidity
-                    { label: '11%', color: '#EF4444' }, // Initial Devs
+                    { label: '35%', color: '#3B82F6' },
+                    { label: '22%', color: '#8B5CF6' },
+                    { label: '17%', color: '#10B981' },
+                    { label: '15%', color: '#F59E0B' },
+                    { label: '11%', color: '#EF4444' },
                 ],
                 // 多语言特定内容
                 langData: {
                     zh: {
                         date: '12月1日',
-                        airdropReq: 'TGE 启动',
-                        airdropMethod: '任务奖励',
-                        airdropNote: 'TGE 19:00 (UTC+8) · 15%初始流通', // 更新备注时间
+                        airdropStatus: 'TGE 启动', // 新增状态字段
+                        airdropValue: '≈ $64',     // 核心大字价值
+                        airdropAmount: '800 RLS',  // 代币数量
+                        airdropNote: '按盘前 $0.08 估算 · 15%初始流通',
                         intro: '连接TradFi与DeFi的L1区块链，由Parfin开发，Tether投资。支持合规RWA代币化与隐私保护，致力于构建“银行区块链”。',
                         bullish: ['Tether/JPMorgan等顶级机构背书', '已处理$60M+真实RWA资产', '独特的隐私+合规模块化设计'],
                         bearish: ['FDV $800M 相对较高', '高度依赖传统机构采用速度', 'RWA赛道竞争激烈'],
@@ -212,9 +213,10 @@
                     },
                     en: {
                         date: 'Dec 1',
-                        airdropReq: 'TGE Launch',
-                        airdropMethod: 'Task Rewards',
-                        airdropNote: 'TGE 11:00 UTC · 15% Init Circ',
+                        airdropStatus: 'TGE Live',
+                        airdropValue: '≈ $64',
+                        airdropAmount: '800 RLS',
+                        airdropNote: 'Est. at $0.08 Pre-Mkt · 15% Circ',
                         intro: 'L1 Blockchain bridging TradFi & DeFi. Developed by Parfin, invested by Tether. Focuses on compliant RWA & privacy.',
                         bullish: ['Backed by Tether/JPMorgan', 'Processed $60M+ Real RWAs', 'Unique Privacy+Compliance Design'],
                         bearish: ['Relatively High FDV ($800M)', 'Dependent on Institutional Adoption', 'Stiff Competition in RWA'],
@@ -222,9 +224,10 @@
                     },
                     ja: {
                         date: '12月1日',
-                        airdropReq: 'TGE開始',
-                        airdropMethod: 'タスク報酬',
-                        airdropNote: '19:00 (UTC+8) · 初期流通15%',
+                        airdropStatus: 'TGE開始',
+                        airdropValue: '≈ $64',
+                        airdropAmount: '800 RLS',
+                        airdropNote: '市場前価格 $0.08換算 · 流通15%',
                         intro: 'TradFiとDeFiを繋ぐL1ブロックチェーン。Parfin開発、Tether出資。コンプライアンス準拠のRWAとプライバシーに特化。',
                         bullish: ['Tether/JPMorgan等の機関支援', '$60M+の実RWA処理実績', '独自のプライバシー+コンプラ設計'],
                         bearish: ['FDV $800Mは比較的高め', '機関採用のスピードに依存', 'RWA分野の激しい競争'],
@@ -232,9 +235,10 @@
                     },
                     ko: {
                         date: '12월 1일',
-                        airdropReq: 'TGE 시작',
-                        airdropMethod: '미션 보상',
-                        airdropNote: '19:00 (UTC+8) · 초기유통 15%',
+                        airdropStatus: 'TGE 시작',
+                        airdropValue: '≈ $64',
+                        airdropAmount: '800 RLS',
+                        airdropNote: '장전가 $0.08 기준 · 초기유통 15%',
                         intro: 'TradFi와 DeFi를 연결하는 L1 블록체인. Parfin 개발, Tether 투자. 규제 준수 RWA 및 프라이버시 중점.',
                         bullish: ['Tether/JPMorgan 등 기관 투자', '$60M+ 실제 RWA 처리', '독보적인 프라이버시/규제 설계'],
                         bearish: ['상대적으로 높은 FDV ($800M)', '기관 도입 속도에 의존', 'RWA 섹터 경쟁 심화'],
@@ -409,18 +413,28 @@
                                 <CompactMetric theme={theme} Icon={Sparkles} label={t.fdv} value={baseData.metrics.fdv} color="text-indigo-500" />
                             </div>
 
-                            {/* Airdrop Bar */}
-                            <div className={`flex flex-col px-3 py-2.5 rounded-xl mb-3 ${isDarkMode ? 'bg-yellow-500/10' : 'bg-yellow-50'} border border-yellow-500/20`}>
-                                <div className="flex items-center justify-between mb-1.5">
-                                    <div className="flex items-center gap-2">
+                            {/* Airdrop Bar - Redesigned for Prominence */}
+                            <div className={`flex flex-col px-4 py-3 rounded-xl mb-3 ${isDarkMode ? 'bg-yellow-500/10' : 'bg-yellow-50'} border border-yellow-500/20 relative overflow-hidden`}>
+                                {/* Background Accent */}
+                                <div className="absolute right-0 top-0 w-24 h-24 bg-yellow-500/10 blur-2xl rounded-full -mr-8 -mt-8 pointer-events-none"></div>
+                                
+                                <div className="flex items-center justify-between mb-1 relative z-10">
+                                    <div className="flex items-center gap-1.5">
                                         <Zap size={14} className="text-yellow-500" />
-                                        <span className="text-xs font-bold text-yellow-500">{t.airdrop}</span>
+                                        <span className="text-xs font-bold text-yellow-500 tracking-wide uppercase">{t.airdrop}</span>
                                     </div>
-                                    <div className="text-xs font-bold text-yellow-500">{langData.airdropReq}</div>
+                                    <div className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${isDarkMode ? 'bg-yellow-500/20 text-yellow-200' : 'bg-yellow-200 text-yellow-800'}`}>
+                                        {langData.airdropStatus}
+                                    </div>
                                 </div>
-                                <div className="flex justify-between items-center text-[10px] opacity-80 border-t border-yellow-500/10 pt-1.5 mt-0.5">
-                                    <span className={`${theme.textSecondary}`}>{langData.airdropMethod}</span>
-                                    <span className={`${theme.textSecondary} font-medium`}>{langData.airdropNote}</span>
+                                
+                                <div className="flex items-baseline gap-2 relative z-10">
+                                    <span className="text-3xl font-black text-yellow-500 tracking-tight leading-none">{langData.airdropValue}</span>
+                                    <span className={`text-sm font-bold ${theme.textSecondary} opacity-80`}>({langData.airdropAmount})</span>
+                                </div>
+                                
+                                <div className={`text-[10px] mt-1.5 pt-1.5 border-t border-yellow-500/10 ${theme.textSecondary} opacity-70 font-medium relative z-10`}>
+                                    {langData.airdropNote}
                                 </div>
                             </div>
 
