@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Binance Alpha Analyzer - RAYLS</title>
+    <title>Binance Alpha Analyzer - Power Protocol</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -64,18 +64,18 @@
         // 2. Logo 组件
         // ==========================================
         const ProjectLogo = ({ id }) => {
-            if (id === 'rayls') {
+            if (id === 'power') {
                 return (
-                    <div className="w-12 h-12 rounded-2xl bg-black flex items-center justify-center shrink-0 overflow-hidden shadow-lg border border-white/10">
-                        {/* 使用 unavatar 获取推特头像 */}
+                    <div className="w-12 h-12 rounded-2xl bg-zinc-800 flex items-center justify-center shrink-0 overflow-hidden shadow-sm border border-zinc-700">
+                        {/* Power Protocol Twitter Avatar */}
                         <img 
-                            src="https://unavatar.io/twitter/RaylsLabs" 
-                            alt="Rayls Logo" 
-                            className="w-full h-full object-cover"
+                            src="https://unavatar.io/twitter/PowerPrtcl" 
+                            alt="Power Protocol Logo" 
+                            className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                             onError={(e) => {
                                 e.target.onerror = null; 
                                 e.target.style.display = 'none';
-                                e.target.parentNode.innerHTML = '<svg viewBox="0 0 24 24" class="w-8 h-8 text-white" fill="currentColor"><path d="M4 4h16v16H4z"/></svg>'; // Fallback
+                                e.target.parentNode.innerHTML = '<svg viewBox="0 0 24 24" class="w-8 h-8 text-zinc-400" fill="currentColor"><path d="M13 2L3 14h9v8l10-12h-9l9-8z"/></svg>'; // Fallback Lightning
                             }}
                         />
                     </div>
@@ -101,7 +101,7 @@
                 open: '开盘(UTC+8)',
                 raised: '融资额',
                 circ: '初始流通',
-                pool: '池子/盘前价', // 更新
+                pool: '池子/盘前价',
                 mcap: '流通市值',
                 fdv: 'FDV',
                 airdrop: '空投/TGE',
@@ -109,7 +109,7 @@
                 bearish: '风险',
                 intro: '简介',
                 total: '总量',
-                chain: 'Uni/Parfin',
+                // chain: 'ETH / BSC', // Removed
                 copy: '复制',
                 copied: '已复制',
                 follow: '关注'
@@ -120,7 +120,7 @@
                 open: 'Open(UTC+8)',
                 raised: 'Raised',
                 circ: 'Init. Circ',
-                pool: 'Pool/Pre-Mkt', // 更新
+                pool: 'Pool/Pre-Mkt',
                 mcap: 'M.Cap',
                 fdv: 'FDV',
                 airdrop: 'Airdrop/TGE',
@@ -128,7 +128,7 @@
                 bearish: 'Bearish',
                 intro: 'Intro',
                 total: 'TOTAL',
-                chain: 'Uni/Parfin',
+                // chain: 'ETH / BSC', // Removed
                 copy: 'Copy',
                 copied: 'Copied',
                 follow: 'Follow'
@@ -139,7 +139,7 @@
                 open: '開始(UTC+8)',
                 raised: '調達額',
                 circ: '初期流通',
-                pool: 'プール/市場前', // 更新
+                pool: 'プール/市場前',
                 mcap: '時価総額',
                 fdv: 'FDV',
                 airdrop: 'TGE情報',
@@ -147,7 +147,7 @@
                 bearish: '懸念点',
                 intro: '概要',
                 total: '合計',
-                chain: 'Uni/Parfin',
+                // chain: 'ETH / BSC', // Removed
                 copy: 'コピー',
                 copied: '完了',
                 follow: 'フォロー'
@@ -158,7 +158,7 @@
                 open: '개장(UTC+8)',
                 raised: '모금액',
                 circ: '초기유통',
-                pool: '풀/프리마켓', // 更新
+                pool: '풀/프리마켓',
                 mcap: '유통시총',
                 fdv: 'FDV',
                 airdrop: 'TGE 정보',
@@ -166,7 +166,7 @@
                 bearish: '리스크',
                 intro: '소개',
                 total: '총계',
-                chain: 'Uni/Parfin',
+                // chain: 'ETH / BSC', // Removed
                 copy: '복사',
                 copied: '완료',
                 follow: '팔로우'
@@ -177,72 +177,72 @@
         // 4. 数据源 (包含多语言内容)
         // ==========================================
         const DATA_CONTENT = {
-            rayls: {
-                id: 'rayls',
-                name: 'RAYLS',
-                symbol: 'RLS',
+            power: {
+                id: 'power',
+                name: 'Power Protocol',
+                symbol: 'POWER',
                 metrics: {
-                    startTime: '12/1 19:00', // 19:00 UTC+8
-                    fundraising: '$25M-38M',
-                    initialCirculation: '15%',
-                    poolPrice: '$0.08',
-                    mcap: '$120M',
-                    fdv: '$800M'
+                    startTime: '12/5 18:00', // 更新：18:00 UTC+8
+                    fundraising: '$12.4M-17.9M',
+                    initialCirculation: '21%',
+                    poolPrice: 'TBD',
+                    mcap: 'TBD',
+                    fdv: 'TBD'
                 },
-                contractAddress: 'TBA (To Be Announced)',
-                exchanges: ['Binance Alpha', 'Pending'],
+                contractAddress: '0x9dC44ae5BE187ECA9e2A67e33f27A4c91cEA1223',
+                exchanges: ['BSC'], // 更新：改为 BSC，删除 Fableborne
                 tokenomics: [
-                    { label: '35%', color: '#3B82F6' },
-                    { label: '22%', color: '#8B5CF6' },
-                    { label: '17%', color: '#10B981' },
-                    { label: '15%', color: '#F59E0B' },
-                    { label: '11%', color: '#EF4444' },
+                    { label: '37.2%', color: '#3B82F6' }, // Community
+                    { label: '28%', color: '#8B5CF6' },   // Ecosystem
+                    { label: '16.15%', color: '#10B981' }, // Investors
+                    { label: '9.23%', color: '#F59E0B' },  // Team
+                    { label: '9.42%', color: '#EF4444' },  // Advisors+Liquidity (4.42+5)
                 ],
                 // 多语言特定内容
                 langData: {
                     zh: {
-                        date: '12月1日',
-                        airdropStatus: 'TGE 启动', // 新增状态字段
-                        airdropValue: '≈ $64',     // 核心大字价值
-                        airdropAmount: '800 RLS',  // 代币数量
-                        airdropNote: '按盘前 $0.08 估算 · 15%初始流通',
-                        intro: '连接TradFi与DeFi的L1区块链，由Parfin开发，Tether投资。支持合规RWA代币化与隐私保护，致力于构建“银行区块链”。',
-                        bullish: ['Tether/JPMorgan等顶级机构背书', '已处理$60M+真实RWA资产', '独特的隐私+合规模块化设计'],
-                        bearish: ['FDV $800M 相对较高', '高度依赖传统机构采用速度', 'RWA赛道竞争激烈'],
-                        tokenomicsLabels: ['基金会/社区', '投资者', '核心团队', '初始流动性', '初始开发']
+                        date: '12月5日',
+                        airdropStatus: 'TGE 启动',
+                        airdropValue: '30-40 U',     // 修改：预估价值
+                        airdropAmount: '先到先得',   // 修改：机制说明
+                        airdropNote: '先到先得 · 盘前无定价', 
+                        intro: '区块链娱乐统一基础设施，旗舰游戏Fableborne已上线S4。$POWER用于生态支付、质押与治理，连接游戏、IP与AI。',
+                        bullish: ['产品落地验证：Fableborne 已运营至S4', '顶级资方背书：Delphi/Spartan/L1D'],
+                        bearish: ['初始流通21%偏高，承接压力大', 'Web3 游戏赛道拥挤，竞争激烈'],
+                        tokenomicsLabels: ['社区与排放', '生态系统', '投资者', '核心团队', '顾问/流动性']
                     },
                     en: {
-                        date: 'Dec 1',
+                        date: 'Dec 5',
                         airdropStatus: 'TGE Live',
-                        airdropValue: '≈ $64',
-                        airdropAmount: '800 RLS',
-                        airdropNote: 'Est. at $0.08 Pre-Mkt · 15% Circ',
-                        intro: 'L1 Blockchain bridging TradFi & DeFi. Developed by Parfin, invested by Tether. Focuses on compliant RWA & privacy.',
-                        bullish: ['Backed by Tether/JPMorgan', 'Processed $60M+ Real RWAs', 'Unique Privacy+Compliance Design'],
-                        bearish: ['Relatively High FDV ($800M)', 'Dependent on Institutional Adoption', 'Stiff Competition in RWA'],
-                        tokenomicsLabels: ['Found./Comm.', 'Investors', 'Core Team', 'Liquidity', 'Init. Devs']
+                        airdropValue: '$30-40',      // Updated
+                        airdropAmount: 'FCFS',       // Updated
+                        airdropNote: 'FCFS · No Pre-market Price',
+                        intro: 'Unified blockchain entertainment infra. Flagship Fableborne live. $POWER for payments, staking & governance.',
+                        bullish: ['Fableborne Season 4 Live', 'Backed by Delphi/Spartan'],
+                        bearish: ['High Initial Circ (21%)', 'Competitive GameFi Sector'],
+                        tokenomicsLabels: ['Community', 'Ecosystem', 'Investors', 'Team', 'Adv./Liq.']
                     },
                     ja: {
-                        date: '12月1日',
+                        date: '12月5日',
                         airdropStatus: 'TGE開始',
-                        airdropValue: '≈ $64',
-                        airdropAmount: '800 RLS',
-                        airdropNote: '市場前価格 $0.08換算 · 流通15%',
-                        intro: 'TradFiとDeFiを繋ぐL1ブロックチェーン。Parfin開発、Tether出資。コンプライアンス準拠のRWAとプライバシーに特化。',
-                        bullish: ['Tether/JPMorgan等の機関支援', '$60M+の実RWA処理実績', '独自のプライバシー+コンプラ設計'],
-                        bearish: ['FDV $800Mは比較的高め', '機関採用のスピードに依存', 'RWA分野の激しい競争'],
-                        tokenomicsLabels: ['財団/地域', '投資家', 'チーム', '流動性', '開発者']
+                        airdropValue: '$30-40',      // Updated
+                        airdropAmount: '先着順',      // Updated
+                        airdropNote: '先着順 · 市場前価格なし',
+                        intro: 'ブロックチェーン娯楽の統合インフラ。Fableborneが稼働中。$POWERは決済、ステーキング、ガバナンスに使用。',
+                        bullish: ['Fableborne S4の実需', 'Delphi/Spartan等の支援'],
+                        bearish: ['初期流通21%は高め', 'GameFi分野の競争激化'],
+                        tokenomicsLabels: ['コミュニティ', 'エコシステム', '投資家', 'チーム', '顧問/流動性']
                     },
                     ko: {
-                        date: '12월 1일',
+                        date: '12월 5일',
                         airdropStatus: 'TGE 시작',
-                        airdropValue: '≈ $64',
-                        airdropAmount: '800 RLS',
-                        airdropNote: '장전가 $0.08 기준 · 초기유통 15%',
-                        intro: 'TradFi와 DeFi를 연결하는 L1 블록체인. Parfin 개발, Tether 투자. 규제 준수 RWA 및 프라이버시 중점.',
-                        bullish: ['Tether/JPMorgan 등 기관 투자', '$60M+ 실제 RWA 처리', '독보적인 프라이버시/규제 설계'],
-                        bearish: ['상대적으로 높은 FDV ($800M)', '기관 도입 속도에 의존', 'RWA 섹터 경쟁 심화'],
-                        tokenomicsLabels: ['재단/커뮤니티', '투자자', '팀', '유동성', '개발자']
+                        airdropValue: '$30-40',      // Updated
+                        airdropAmount: '선착순',      // Updated
+                        airdropNote: '선착순 · 장전 가격 부재',
+                        intro: '블록체인 엔터테인먼트 통합 인프라. Fableborne 시즌4 출시. $POWER는 결제, 스테이킹, 거버넌스에 사용.',
+                        bullish: ['Fableborne 게임 실제 수요', 'Delphi/Spartan 투자 유치'],
+                        bearish: ['초기 유통 21% 다소 높음', 'GameFi 경쟁 심화'],
+                        tokenomicsLabels: ['커뮤니티', '생태계', '투자자', '팀', '고문/유동성']
                     }
                 }
             }
@@ -262,7 +262,7 @@
         );
 
         const App = () => {
-            const [currentId, setCurrentId] = useState('rayls');
+            const [currentId, setCurrentId] = useState('power');
             const [lang, setLang] = useState('zh'); // 默认中文
             const [showLangMenu, setShowLangMenu] = useState(false);
             const [copied, setCopied] = useState(false);
@@ -306,6 +306,11 @@
                 cardBg: isDarkMode ? 'bg-[#1c1c1e] border-white/10' : 'bg-white border-gray-200',
                 accentColor: isDarkMode ? 'text-blue-400' : 'text-blue-600',
                 buttonBg: isDarkMode ? 'bg-white/10' : 'bg-gray-100',
+                
+                // 恢复了多彩但高级的配色 (莫兰迪色系)
+                chartColors: isDarkMode 
+                    ? ['#60a5fa', '#a78bfa', '#34d399', '#fbbf24', '#f87171'] 
+                    : ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'],
             };
 
             // Chart Data Construction
@@ -315,7 +320,13 @@
                 const value = parseFloat(item.label); // Extract number from "45%"
                 const startOffset = cumulativePercent;
                 cumulativePercent += value;
-                return { ...item, labelText: label, value, offset: startOffset };
+                return { 
+                    ...item, 
+                    labelText: label, 
+                    value, 
+                    offset: startOffset,
+                    color: theme.chartColors[index % theme.chartColors.length]
+                };
             });
 
             return (
@@ -510,7 +521,7 @@
                                             <span key={i} className={`text-[9px] px-1.5 py-0.5 rounded ${i===0 ? 'bg-blue-500 text-white' : theme.buttonBg}`}>{ex}</span>
                                         ))}
                                     </div>
-                                    <div className="text-[10px] text-gray-500">{t.chain}</div>
+                                    {/* Removed chain label display */}
                                 </div>
                                 <div onClick={handleCopy} className={`flex items-center justify-between p-2 rounded-lg cursor-pointer ${isDarkMode ? 'bg-black/30' : 'bg-gray-50'} active:scale-95 transition-transform`}>
                                     <code className="text-[10px] font-mono opacity-70 break-all mr-2">{baseData.contractAddress}</code>
