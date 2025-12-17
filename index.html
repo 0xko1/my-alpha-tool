@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Binance Alpha Analyzer - Power Protocol</title>
+    <title>Binance Alpha Analyzer - Infrared</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -64,18 +64,18 @@
         // 2. Logo 组件
         // ==========================================
         const ProjectLogo = ({ id }) => {
-            if (id === 'power') {
+            if (id === 'infrared') {
                 return (
                     <div className="w-12 h-12 rounded-2xl bg-zinc-800 flex items-center justify-center shrink-0 overflow-hidden shadow-sm border border-zinc-700">
-                        {/* Power Protocol Twitter Avatar */}
+                        {/* Infrared Twitter Avatar */}
                         <img 
-                            src="https://unavatar.io/twitter/PowerPrtcl" 
-                            alt="Power Protocol Logo" 
+                            src="https://images.asksurf.ai/rIHsYIw5_74-Q51qpS7LuWDN7X9bJUsSkgK3XFoIPDs/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE5NDU0NTI5NzUyNjQwMzQ4MTYvTmNPQnRoNUUuanBn" 
+                            alt="Infrared Logo" 
                             className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                             onError={(e) => {
                                 e.target.onerror = null; 
                                 e.target.style.display = 'none';
-                                e.target.parentNode.innerHTML = '<svg viewBox="0 0 24 24" class="w-8 h-8 text-zinc-400" fill="currentColor"><path d="M13 2L3 14h9v8l10-12h-9l9-8z"/></svg>'; // Fallback Lightning
+                                e.target.parentNode.innerHTML = '<svg viewBox="0 0 24 24" class="w-8 h-8 text-zinc-400" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>'; // Fallback
                             }}
                         />
                     </div>
@@ -109,7 +109,7 @@
                 bearish: '风险',
                 intro: '简介',
                 total: '总量',
-                // chain: 'ETH / BSC', // Removed
+                chain: 'BSC',
                 copy: '复制',
                 copied: '已复制',
                 follow: '关注'
@@ -128,7 +128,7 @@
                 bearish: 'Bearish',
                 intro: 'Intro',
                 total: 'TOTAL',
-                // chain: 'ETH / BSC', // Removed
+                chain: 'BSC',
                 copy: 'Copy',
                 copied: 'Copied',
                 follow: 'Follow'
@@ -147,7 +147,7 @@
                 bearish: '懸念点',
                 intro: '概要',
                 total: '合計',
-                // chain: 'ETH / BSC', // Removed
+                chain: 'BSC',
                 copy: 'コピー',
                 copied: '完了',
                 follow: 'フォロー'
@@ -166,7 +166,7 @@
                 bearish: '리스크',
                 intro: '소개',
                 total: '총계',
-                // chain: 'ETH / BSC', // Removed
+                chain: 'BSC',
                 copy: '복사',
                 copied: '완료',
                 follow: '팔로우'
@@ -177,72 +177,72 @@
         // 4. 数据源 (包含多语言内容)
         // ==========================================
         const DATA_CONTENT = {
-            power: {
-                id: 'power',
-                name: 'Power Protocol',
-                symbol: 'POWER',
+            infrared: {
+                id: 'infrared',
+                name: 'Infrared',
+                symbol: 'IR',
                 metrics: {
-                    startTime: '12/5 18:00', // 更新：18:00 UTC+8
-                    fundraising: '$12.4M-17.9M',
-                    initialCirculation: '21%',
-                    poolPrice: 'TBD',
-                    mcap: 'TBD',
-                    fdv: 'TBD'
+                    startTime: '12/17 16:00', // 08:00 UTC = 16:00 UTC+8
+                    fundraising: '$18.75M',
+                    initialCirculation: '20.5%',
+                    poolPrice: '$0.05 - $0.10', // Updated: User estimation
+                    mcap: '$10M - $20.5M',      // Updated: Calc based on FDV 50-100M * 20.5%
+                    fdv: '$50M - $100M'         // Updated: User estimation
                 },
-                contractAddress: '0x9dC44ae5BE187ECA9e2A67e33f27A4c91cEA1223',
-                exchanges: ['BSC'], // 更新：改为 BSC，删除 Fableborne
+                contractAddress: '0xace9de5af92eb82a97a5973b00eff85024bdcb39',
+                exchanges: ['Binance Wallet', 'KuCoin', 'Bitget'],
                 tokenomics: [
-                    { label: '37.2%', color: '#3B82F6' }, // Community
-                    { label: '28%', color: '#8B5CF6' },   // Ecosystem
-                    { label: '16.15%', color: '#10B981' }, // Investors
-                    { label: '9.23%', color: '#F59E0B' },  // Team
-                    { label: '9.42%', color: '#EF4444' },  // Advisors+Liquidity (4.42+5)
+                    { label: '23.5%', color: '#3B82F6' }, // Community/Eco
+                    { label: '21.3%', color: '#8B5CF6' }, // Investors
+                    { label: '18.0%', color: '#10B981' }, // Team
+                    { label: '13.2%', color: '#F59E0B' }, // Treasury
+                    { label: '24.0%', color: '#EF4444' }, // Others (Foundation 10% + Liquidity 10% + Airdrop 4%)
                 ],
                 // 多语言特定内容
                 langData: {
                     zh: {
-                        date: '12月5日',
+                        date: '12月17日',
                         airdropStatus: 'TGE 启动',
-                        airdropValue: '30-40 U',     // 修改：预估价值
-                        airdropAmount: '先到先得',   // 修改：机制说明
-                        airdropNote: '先到先得 · 盘前无定价', 
-                        intro: '区块链娱乐统一基础设施，旗舰游戏Fableborne已上线S4。$POWER用于生态支付、质押与治理，连接游戏、IP与AI。',
-                        bullish: ['产品落地验证：Fableborne 已运营至S4', '顶级资方背书：Delphi/Spartan/L1D'],
-                        bearish: ['初始流通21%偏高，承接压力大', 'Web3 游戏赛道拥挤，竞争激烈'],
-                        tokenomicsLabels: ['社区与排放', '生态系统', '投资者', '核心团队', '顾问/流动性']
+                        airdropValue: 'TBD', // 暂无定价
+                        airdropAmount: '4% 空投',
+                        airdropNote: 'Binance Wallet 独家 · 20.5%初始流通',
+                        intro: 'Berachain 上的 DeFi 基础设施龙头 (TVL $265M+)，提供 iBERA/iBGT 流动性质押与 PoL 金库，简化 DeFi 参与门槛。',
+                        bullish: ['顶级背书：Binance Labs/Framework 领投 $18.75M', '生态龙头：Berachain TVL 第一，产品创新性强', '收益回购：协议收入用于回购 IR，具备价值捕获'],
+                        bearish: ['极度中心化：Top1 地址持币 76.4%，巨鲸风险高', '中期抛压：6个月后 VC/团队 解锁，抛压集中', '无盘前定价：缺乏锚定，开盘可能出现高波动'],
+                        tokenomicsLabels: ['社区与生态', '投资者', '团队', '金库', '其他(基金会/流/空)']
                     },
                     en: {
-                        date: 'Dec 5',
+                        date: 'Dec 17',
                         airdropStatus: 'TGE Live',
-                        airdropValue: '$30-40',      // Updated
-                        airdropAmount: 'FCFS',       // Updated
-                        airdropNote: 'FCFS · No Pre-market Price',
-                        intro: 'Unified blockchain entertainment infra. Flagship Fableborne live. $POWER for payments, staking & governance.',
-                        bullish: ['Fableborne Season 4 Live', 'Backed by Delphi/Spartan'],
-                        bearish: ['High Initial Circ (21%)', 'Competitive GameFi Sector'],
-                        tokenomicsLabels: ['Community', 'Ecosystem', 'Investors', 'Team', 'Adv./Liq.']
+                        airdropValue: 'TBD',
+                        airdropAmount: '4% Airdrop',
+                        airdropNote: 'Binance Wallet Excl. · 20.5% Circ',
+                        intro: 'Leading DeFi infra on Berachain (TVL $265M+). Liquid staking (iBERA/iBGT) & PoL vaults simplifing DeFi access.',
+                        bullish: ['Backed by Binance Labs/Framework ($18.75M)', '#1 TVL on Berachain, Strong Product Fit', 'Revenue Buyback Mechanism'],
+                        bearish: ['Centralization: Top 1 Holder owns 76.4%', 'Unlock Pressure: VC/Team unlock in 6 months', 'No Pre-market Price Anchor'],
+                        tokenomicsLabels: ['Comm./Eco', 'Investors', 'Team', 'Treasury', 'Others']
                     },
                     ja: {
-                        date: '12月5日',
+                        date: '12月17日',
                         airdropStatus: 'TGE開始',
-                        airdropValue: '$30-40',      // Updated
-                        airdropAmount: '先着順',      // Updated
-                        airdropNote: '先着順 · 市場前価格なし',
-                        intro: 'ブロックチェーン娯楽の統合インフラ。Fableborneが稼働中。$POWERは決済、ステーキング、ガバナンスに使用。',
-                        bullish: ['Fableborne S4の実需', 'Delphi/Spartan等の支援'],
-                        bearish: ['初期流通21%は高め', 'GameFi分野の競争激化'],
-                        tokenomicsLabels: ['コミュニティ', 'エコシステム', '投資家', 'チーム', '顧問/流動性']
+                        airdropValue: 'TBD',
+                        airdropAmount: '4% 配布',
+                        airdropNote: 'Binance Wallet 限定 · 流通20.5%',
+                        intro: 'Berachain上のDeFiインフラ最大手（TVL $265M+）。iBERA/iBGTなどの流動性ステーキングとPoL金庫を提供。',
+                        bullish: ['Binance Labs/Framework等が$18.75M出資', 'Berachain TVL 1位、製品の革新性', '収益によるIR買い戻しメカニズム'],
+                        bearish: ['中央集権リスク：Top1が76.4%保有', '6ヶ月後のVC/チーム ロック解除圧力', '市場前価格なし、高変動の可能性'],
+                        tokenomicsLabels: ['コミュニティ', '投資家', 'チーム', 'トレジャリー', 'その他']
                     },
                     ko: {
-                        date: '12월 5일',
+                        date: '12월 17일',
                         airdropStatus: 'TGE 시작',
-                        airdropValue: '$30-40',      // Updated
-                        airdropAmount: '선착순',      // Updated
-                        airdropNote: '선착순 · 장전 가격 부재',
-                        intro: '블록체인 엔터테인먼트 통합 인프라. Fableborne 시즌4 출시. $POWER는 결제, 스테이킹, 거버넌스에 사용.',
-                        bullish: ['Fableborne 게임 실제 수요', 'Delphi/Spartan 투자 유치'],
-                        bearish: ['초기 유통 21% 다소 높음', 'GameFi 경쟁 심화'],
-                        tokenomicsLabels: ['커뮤니티', '생태계', '투자자', '팀', '고문/유동성']
+                        airdropValue: 'TBD',
+                        airdropAmount: '4% 에어드랍',
+                        airdropNote: '바이낸스 지갑 독점 · 초기유통 20.5%',
+                        intro: 'Berachain 1위 DeFi 인프라 (TVL $265M+). iBERA/iBGT 유동성 스테이킹 및 PoL 볼트 제공.',
+                        bullish: ['Binance Labs/Framework $18.75M 투자', '생태계 TVL 1위, 혁신적인 제품', '수익 바이백 메커니즘'],
+                        bearish: ['중앙화 위험: 상위 1개 주소가 76.4% 보유', '6개월 후 VC/팀 락업 해제 압력', '장전 가격 부재, 변동성 주의'],
+                        tokenomicsLabels: ['커뮤니티', '투자자', '팀', '트레저리', '기타']
                     }
                 }
             }
@@ -262,7 +262,7 @@
         );
 
         const App = () => {
-            const [currentId, setCurrentId] = useState('power');
+            const [currentId, setCurrentId] = useState('infrared');
             const [lang, setLang] = useState('zh'); // 默认中文
             const [showLangMenu, setShowLangMenu] = useState(false);
             const [copied, setCopied] = useState(false);
@@ -388,11 +388,11 @@
                                             title="点击访问推特主页"
                                         >
                                             <div className="flex items-center gap-2">
-                                                {/* 用户头像 */}
+                                                {/* 用户头像 - 尺寸调整为 w-8 h-8 */}
                                                 <img 
                                                     src="https://pbs.twimg.com/profile_images/1983480781898231809/dAhgN1BY_400x400.jpg" 
                                                     alt="User" 
-                                                    className="w-5 h-5 rounded-full border border-white/20"
+                                                    className="w-8 h-8 rounded-full border border-white/20"
                                                     onError={(e) => { e.target.style.display = 'none'; }}
                                                 />
                                                 <span className={`text-2xl tracking-tight font-handle allow-select group-hover:opacity-80 transition-opacity ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
@@ -521,7 +521,7 @@
                                             <span key={i} className={`text-[9px] px-1.5 py-0.5 rounded ${i===0 ? 'bg-blue-500 text-white' : theme.buttonBg}`}>{ex}</span>
                                         ))}
                                     </div>
-                                    {/* Removed chain label display */}
+                                    <div className="text-[10px] text-gray-500">{t.chain}</div>
                                 </div>
                                 <div onClick={handleCopy} className={`flex items-center justify-between p-2 rounded-lg cursor-pointer ${isDarkMode ? 'bg-black/30' : 'bg-gray-50'} active:scale-95 transition-transform`}>
                                     <code className="text-[10px] font-mono opacity-70 break-all mr-2">{baseData.contractAddress}</code>
